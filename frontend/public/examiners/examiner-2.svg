@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="200" height="240">
+  <!-- Background -->
+  <rect width="200" height="240" fill="#F0F0F0" rx="4"/>
+
+  <!-- Silhouette: Head (slightly wider face) -->
+  <ellipse cx="100" cy="50" rx="26" ry="27" fill="#333333"/>
+
+  <!-- Silhouette: Neck -->
+  <rect x="91" y="75" width="18" height="11" fill="#333333"/>
+
+  <!-- Silhouette: Suit jacket (wider shoulders, more imposing) -->
+  <path d="M 91 86 Q 45 88 28 108 L 25 135 L 25 195 L 175 195 L 175 135 L 172 108 Q 155 88 109 86 Z" fill="#333333"/>
+
+  <!-- Collar line -->
+  <polygon points="91,86 100,112 109,86" fill="#555555"/>
+
+  <!-- Desk -->
+  <rect x="0" y="215" width="200" height="25" fill="#444444"/>
+  <rect x="0" y="212" width="200" height="5" fill="#555555"/>
+
+  <!-- Nameplate (slightly offset) -->
+  <rect x="50" y="194" width="100" height="18" fill="#666666" rx="2"/>
+  <rect x="50" y="194" width="100" height="3" fill="#777777" rx="1"/>
+</svg>

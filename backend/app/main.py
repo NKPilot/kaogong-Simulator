@@ -1,10 +1,11 @@
 import logging
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import health, questions
+from app.routers import guidance, health, questions, tts
 from app.services.question_service import load_questions
 
 logger = logging.getLogger("interview-simulator")
@@ -16,6 +17,14 @@ async def lifespan(app: FastAPI):
     try:
         count = len(load_questions())
         logger.info(f"Loaded {count} questions from data file")
+
+        # Warn if DashScope API key is not configured (graceful degradation per D-16)
+        if not os.environ.get("DASHSCOPE_API_KEY"):
+            logger.warning(
+                "DASHSCOPE_API_KEY environment variable not set. "
+                "TTS endpoint will fail when called. "
+                "Set it in your environment to enable speech synthesis."
+            )
     except Exception as e:
         logger.error(f"Failed to load questions: {e}")
         raise
@@ -37,10 +46,12 @@ app.add_middleware(
         "http://127.0.0.1:5173",
     ],
     allow_credentials=False,
-    allow_methods=["GET"],
+    allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
 # Register routers
 app.include_router(health.router)
 app.include_router(questions.router)
+app.include_router(guidance.router)
+app.include_router(tts.router)
