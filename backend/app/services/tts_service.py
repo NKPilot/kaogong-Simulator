@@ -38,7 +38,6 @@ def synthesize_speech(text: str, voice: str = "longxiaocheng_v2") -> bytes:
         model="cosyvoice-v2",
         voice=voice,
         format="mp3",
-        sample_rate=22050,
         rate=1.0,
     )
 
