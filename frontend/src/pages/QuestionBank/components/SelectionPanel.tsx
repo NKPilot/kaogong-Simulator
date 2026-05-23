@@ -18,11 +18,6 @@ export default function SelectionPanel() {
     return '已选择 4/4 题';
   }
 
-  function getAlertType(): 'warning' | 'success' | 'info' {
-    if (selectedCount < 3) return 'warning';
-    return 'success';
-  }
-
   function handleStartInterview() {
     if (canProceed()) {
       navigate('/exam-room');
