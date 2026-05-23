@@ -45,8 +45,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 **Wave 1**
-- [ ] 02-01-PLAN.md — Backend API: guidance text endpoint + TTS synthesis proxy via DashScope
-- [ ] 02-02-PLAN.md — Frontend assets + base UI: silhouette examiners, red banner, examiner row, entry animation, API modules
+- [x] 02-01-PLAN.md — Backend API: guidance text endpoint + TTS synthesis proxy via DashScope
+- [x] 02-02-PLAN.md — Frontend assets + base UI: silhouette examiners, red banner, examiner row, entry animation, API modules
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 02-03-PLAN.md — Frontend integration: guidance toggle, TTS controls, CTA button, ExamRoomPage orchestrator
@@ -87,6 +87,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation + Question Bank | 4/4 | Complete | 2026-05-23 |
-| 2. Virtual Exam Room | 0/3 | Not started | - |
+| 2. Virtual Exam Room | 2/3 | In Progress|  |
 | 3. Question-by-Question Interview | 0/TBD | Not started | - |
 | 4. Scoring & Feedback | 0/TBD | Not started | - |
