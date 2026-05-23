@@ -72,7 +72,7 @@ Plans:
 - [x] 03-01-PLAN.md — Backend recording upload endpoint (POST /api/recording/upload)
 - [x] 03-02-PLAN.md — Interview store (useInterviewStore), types, recording API module
 - [x] 03-03-PLAN.md — TimerRing, RecordingIndicator, ReReadButton components
-- [ ] 03-04-PLAN.md — QuestionDrawer, ProgressIndicator, StatusTextBar, TransitionPage, MicPermissionError components
+- [x] 03-04-PLAN.md — QuestionDrawer, ProgressIndicator, StatusTextBar, TransitionPage, MicPermissionError components
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 03-05-PLAN.md — QuestionInterviewPage orchestrator + router update
