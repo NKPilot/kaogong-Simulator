@@ -75,9 +75,9 @@ Same scale as Phase 2, with additions for Phase 3-specific roles.
 |------|------|--------|-------------|---------|
 | Body | 14px | 400 | 1.5 | Status text, control labels, progress text |
 | Question body (drawer) | 16px | 400 | 1.6 | Question full text inside bottom drawer |
-| Button text | 14px | 500 | 1.571 | "查看题目", "请求重读题目", re-read button |
+| Button text | 14px | 700 | 1.571 | "查看题目", "请求重读题目", re-read button |
 | Heading | 20px | 700 | 1.3 | Transition page "第 X 题完成" heading |
-| Banner display | 28px | 700 | 1.2 | Red banner "2025公务员模拟面试" (unchanged) |
+| Banner display | 20px | 700 | 1.2 | Red banner "2025公务员模拟面试" (unchanged) |
 | Timer MM:SS | 40px | 700 | 1.0 | Countdown number in center of timer ring |
 | Timer label | 14px | 400 | 1.5 | "思考时间" / "答题时间" label above timer ring |
 | Progress text | 14px | 400 | 1.5 | "第 2/4 题" text below Steps component |
@@ -203,7 +203,7 @@ When timer reaches 0:00, phase auto-advances per D-03.
 +--------------------------------------------------------------+
 |                                                               |
 |   Red Banner (full-width, 64px height)                        |
-|   "2025公务员模拟面试" (28px white, centered)                 |
+|   "2025公务员模拟面试" (20px white, centered)                 |
 |                                                               |
 |   Progress Indicator (centered)                               |
 |   [o --- o --- o --- o]   Steps dots  (Ant Steps)             |
@@ -313,7 +313,7 @@ When timer reaches 0:00, phase auto-advances per D-03.
 | Implementation (discretion) | CSS-only animated bars (simpler, no Canvas dependency) -- 5-7 bars of varying height, each animating independently using CSS `@keyframes` with different delays |
 | Bar colors | Active: `#BE1E2D`, Idle: `#E8E8E8` |
 | Bar dimensions | Each bar ~4px wide, max height ~24px, min height ~4px, rounded top |
-| Bar positions | Centered below recording text, gap 3px between bars |
+| Bar positions | Centered below recording text, gap 4px between bars |
 
 **Waveform CSS approach (recommended over Canvas per discretion):**
 ```css
@@ -519,7 +519,7 @@ All copy in Chinese (Simplified). Tone: Formal, authoritative, exam-like.
 | Content area (padding: 0 for full-width banner)               |
 |                                                               |
 |  +-- RedBanner (full-width, 64px) --------------------------+ |
-|  |  2025公务员模拟面试 (28px white centered)                 | |
+|  |  2025公务员模拟面试 (20px white centered)                 | |
 |  +----------------------------------------------------------+ |
 |                                                               |
 |  +-- ProgressIndicator (centered) --------------------------+ |
