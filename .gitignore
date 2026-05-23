@@ -1,2 +1,4 @@
 .pids/
 .claude/worktrees/
+
+.playwright-mcp/
