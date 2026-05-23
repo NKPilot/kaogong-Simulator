@@ -39,8 +39,14 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. User hears TTS audio reading the interview guidance (welcome message, exam rules)
   3. User can read the guidance text alongside the audio
   4. User can proceed from guidance to the first question when ready
-**Plans**: TBD
+**Plans**: 3 plans
+
 **UI hint**: yes
+
+Plans:
+- [ ] 02-01-PLAN.md — Backend API: guidance text endpoint + TTS synthesis proxy via DashScope
+- [ ] 02-02-PLAN.md — Frontend assets + base UI: silhouette examiners, red banner, examiner row, entry animation, API modules
+- [ ] 02-03-PLAN.md — Frontend integration: guidance toggle, TTS controls, CTA button, ExamRoomPage orchestrator
 
 ### Phase 3: Question-by-Question Interview
 **Goal**: Users complete each question in sequence with timed thinking, voice recording, and managed progression.
@@ -78,6 +84,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation + Question Bank | 4/4 | Complete | 2026-05-23 |
-| 2. Virtual Exam Room | 0/TBD | Not started | - |
+| 2. Virtual Exam Room | 0/3 | Not started | - |
 | 3. Question-by-Question Interview | 0/TBD | Not started | - |
 | 4. Scoring & Feedback | 0/TBD | Not started | - |
