@@ -64,8 +64,18 @@ Plans:
   6. User can request question re-read once, which replays the TTS and restarts the thinking timer
   7. After answering, user advances to the next question; progress indicator shows current position (e.g., "Question 2/4")
   8. Interview completes after the last question; user transitions to results automatically
-**Plans**: TBD
+**Plans**: 5 plans
 **UI hint**: yes
+
+Plans:
+**Wave 1**
+- [ ] 03-01-PLAN.md — Backend recording upload endpoint (POST /api/recording/upload)
+- [ ] 03-02-PLAN.md — Interview store (useInterviewStore), types, recording API module
+- [ ] 03-03-PLAN.md — TimerRing, RecordingIndicator, ReReadButton components
+- [ ] 03-04-PLAN.md — QuestionDrawer, ProgressIndicator, StatusTextBar, TransitionPage, MicPermissionError components
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 03-05-PLAN.md — QuestionInterviewPage orchestrator + router update
 
 ### Phase 4: Scoring & Feedback
 **Goal**: Users receive scores and textual feedback based on comparison with official scoring criteria.
@@ -88,5 +98,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 |-------|----------------|--------|-----------|
 | 1. Foundation + Question Bank | 4/4 | Complete | 2026-05-23 |
 | 2. Virtual Exam Room | 3/3 | Complete    | 2026-05-23 |
-| 3. Question-by-Question Interview | 0/TBD | Not started | - |
+| 3. Question-by-Question Interview | 0/5 | Not started | - |
 | 4. Scoring & Feedback | 0/TBD | Not started | - |
