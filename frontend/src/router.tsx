@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import AppLayout from './layouts/AppLayout';
 import QuestionBankPage from './pages/QuestionBank';
 import ExamRoomPage from './pages/ExamRoom';
+import QuestionInterviewPage from './pages/QuestionInterview';
 
 export const router = createBrowserRouter([
   {
@@ -10,6 +11,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <QuestionBankPage /> },
       { path: 'exam-room', element: <ExamRoomPage /> },
+      { path: 'exam-room/question', element: <QuestionInterviewPage /> },
     ],
   },
 ]);

@@ -176,7 +176,7 @@ export default function ExamRoomPage() {
       audioRef.current.pause();
       audioRef.current.src = '';
     }
-    navigate('/exam-room/question/1');
+    navigate('/exam-room/question');
   };
 
   return (
