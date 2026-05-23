@@ -12,7 +12,7 @@
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation + Question Bank** - 项目 scaffold、题库数据加载、浏览与选题
+- [x] **Phase 1: Foundation + Question Bank** - 项目 scaffold、题库数据加载、浏览与选题
 - [ ] **Phase 2: Virtual Exam Room** - 虚拟考场展示、数字人考官形象、引导语播报
 - [ ] **Phase 3: Question-by-Question Interview** - TTS 读题、限时思考、语音作答、逐题推进
 - [ ] **Phase 4: Scoring & Feedback** - 基于 score_points 的统一评分与反馈展示
@@ -77,7 +77,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + Question Bank | 2/3 | In Progress | 2026-05-23 |
+| 1. Foundation + Question Bank | 3/3 | Complete | 2026-05-23 |
 | 2. Virtual Exam Room | 0/TBD | Not started | - |
 | 3. Question-by-Question Interview | 0/TBD | Not started | - |
 | 4. Scoring & Feedback | 0/TBD | Not started | - |
