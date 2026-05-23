@@ -180,7 +180,7 @@ export default function ExamRoomPage() {
   };
 
   return (
-    <div className="exam-room-entry" style={{ marginLeft: -32, marginRight: -32 }}>
+    <div className="exam-room-entry">
       {/* Play overlay when autoplay blocked */}
       {playBlocked && (
         <div
