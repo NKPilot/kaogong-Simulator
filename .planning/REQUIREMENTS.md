@@ -15,7 +15,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### 面试流程 (Interview Flow)
 
 - [ ] **FLOW-01**: 进入模拟面试后展示虚拟考场（多位考官静态图）
-- [ ] **FLOW-02**: TTS 念出引导语，宣布面试开始
+- [x] **FLOW-02**: TTS 念出引导语，宣布面试开始
 - [ ] **FLOW-03**: 题目逐题进行，当前题完成后进入下一题
 - [ ] **FLOW-04**: 用户可切换是否在屏幕上显示题目文本
 
@@ -87,7 +87,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | QB-01 | Phase 1 | Pending |
 | QB-02 | Phase 1 | Pending |
 | FLOW-01 | Phase 2 | Pending |
-| FLOW-02 | Phase 2 | Pending |
+| FLOW-02 | Phase 2 | Complete |
 | FLOW-03 | Phase 3 | Pending |
 | FLOW-04 | Phase 3 | Pending |
 | VOICE-01 | Phase 3 | Pending |
