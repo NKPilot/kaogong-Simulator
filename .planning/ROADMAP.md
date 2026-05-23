@@ -44,8 +44,11 @@ Decimal phases appear between their surrounding integers in numeric order.
 **UI hint**: yes
 
 Plans:
+**Wave 1**
 - [ ] 02-01-PLAN.md — Backend API: guidance text endpoint + TTS synthesis proxy via DashScope
 - [ ] 02-02-PLAN.md — Frontend assets + base UI: silhouette examiners, red banner, examiner row, entry animation, API modules
+
+**Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 02-03-PLAN.md — Frontend integration: guidance toggle, TTS controls, CTA button, ExamRoomPage orchestrator
 
 ### Phase 3: Question-by-Question Interview
