@@ -9,6 +9,7 @@ import os
 
 import dashscope
 from dashscope.audio.tts_v2 import SpeechSynthesizer
+from dashscope.audio.tts_v2.speech_synthesizer import AudioFormat
 
 # Configure API key from environment — never exposed to the frontend
 dashscope.api_key = os.environ.get("DASHSCOPE_API_KEY", "")
@@ -37,8 +38,8 @@ def synthesize_speech(text: str, voice: str = "longxiaocheng_v2") -> bytes:
     synthesizer = SpeechSynthesizer(
         model="cosyvoice-v2",
         voice=voice,
-        format="mp3",
-        rate=1.0,
+        format=AudioFormat.MP3_22050HZ_MONO_256KBPS,
+        speech_rate=1.0,
     )
 
     audio_bytes = synthesizer.call(text)
