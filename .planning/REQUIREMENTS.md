@@ -14,7 +14,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### 面试流程 (Interview Flow)
 
-- [ ] **FLOW-01**: 进入模拟面试后展示虚拟考场（多位考官静态图）
+- [x] **FLOW-01**: 进入模拟面试后展示虚拟考场（多位考官静态图）
 - [x] **FLOW-02**: TTS 念出引导语，宣布面试开始
 - [ ] **FLOW-03**: 题目逐题进行，当前题完成后进入下一题
 - [ ] **FLOW-04**: 用户可切换是否在屏幕上显示题目文本
@@ -39,7 +39,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### 前端界面 (Frontend)
 
-- [ ] **UI-01**: 考官形象展示区域（多考官静态图片布局）
+- [x] **UI-01**: 考官形象展示区域（多考官静态图片布局）
 - [ ] **UI-02**: 题目文本展示区域（可切换显隐）
 - [ ] **UI-03**: 计时器倒计时展示
 - [ ] **UI-04**: 答题进度展示（如 1/3）
@@ -86,7 +86,7 @@ Deferred to future release. Tracked but not in current roadmap.
 |-------------|-------|--------|
 | QB-01 | Phase 1 | Pending |
 | QB-02 | Phase 1 | Pending |
-| FLOW-01 | Phase 2 | Pending |
+| FLOW-01 | Phase 2 | Complete |
 | FLOW-02 | Phase 2 | Complete |
 | FLOW-03 | Phase 3 | Pending |
 | FLOW-04 | Phase 3 | Pending |
@@ -99,7 +99,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | SCORE-01 | Phase 4 | Pending |
 | SCORE-02 | Phase 4 | Pending |
 | SCORE-03 | Phase 4 | Pending |
-| UI-01 | Phase 2 | Pending |
+| UI-01 | Phase 2 | Complete |
 | UI-02 | Phase 3 | Pending |
 | UI-03 | Phase 3 | Pending |
 | UI-04 | Phase 3 | Pending |

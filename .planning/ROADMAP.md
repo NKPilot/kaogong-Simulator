@@ -87,6 +87,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation + Question Bank | 4/4 | Complete | 2026-05-23 |
-| 2. Virtual Exam Room | 3/3 | Complete   | 2026-05-23 |
+| 2. Virtual Exam Room | 3/3 | Complete    | 2026-05-23 |
 | 3. Question-by-Question Interview | 0/TBD | Not started | - |
 | 4. Scoring & Feedback | 0/TBD | Not started | - |
