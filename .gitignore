@@ -1,4 +1,6 @@
 .pids/
+logs/
 .claude/worktrees/
+.env
 
 .playwright-mcp/
