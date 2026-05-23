@@ -28,7 +28,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. User can select any 3-4 questions from the list and see their selection reflected in the UI
   3. User can proceed from selection to start the simulated interview
   4. Backend API serves question data; frontend renders the question list without errors
-**Plans**: P01-Project Init, P02-Backend API, P03-Frontend Scaffold, P04-Question Bank Page
+**Plans**: 4/4 complete — P01-Extract, P02-Backend API, P03-Frontend Scaffold, P04-Question Bank Page
 
 ### Phase 2: Virtual Exam Room
 **Goal**: Users enter a virtual exam room with examiner images and receive interview guidance.
