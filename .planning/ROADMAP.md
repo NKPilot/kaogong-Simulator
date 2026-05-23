@@ -28,7 +28,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. User can select any 3-4 questions from the list and see their selection reflected in the UI
   3. User can proceed from selection to start the simulated interview
   4. Backend API serves question data; frontend renders the question list without errors
-**Plans**: TBD
+**Plans**: P01-Project Init, P02-Backend API, P03-Frontend Scaffold, P04-Question Bank Page
 
 ### Phase 2: Virtual Exam Room
 **Goal**: Users enter a virtual exam room with examiner images and receive interview guidance.
@@ -77,7 +77,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + Question Bank | 3/3 | Complete | 2026-05-23 |
+| 1. Foundation + Question Bank | 4/4 | Complete | 2026-05-23 |
 | 2. Virtual Exam Room | 0/TBD | Not started | - |
 | 3. Question-by-Question Interview | 0/TBD | Not started | - |
 | 4. Scoring & Feedback | 0/TBD | Not started | - |

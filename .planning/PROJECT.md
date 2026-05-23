@@ -54,6 +54,9 @@
 | 数字人考官用静态图/简单动图而非 3D 渲染 | 大幅降低复杂度，考官只需念题无需高交互 | — Pending |
 | 第三方数字人 API 优先 | 快速上线，避免自研渲染引擎 | — Pending |
 | FastAPI + uv 后端 | 用户偏好 | — Pending |
+| TypeTag color mapping | TYPE_CONFIG lookup with Chinese "类" suffix for display | Plan 04 |
+| Selection panel | Reads Zustand store directly; uses getState() for tag close to avoid stale closure | Plan 04 |
+| Question table | Zustand store direct consumption (no props drilling) | Plan 04 |
 
 ## Evolution
 
