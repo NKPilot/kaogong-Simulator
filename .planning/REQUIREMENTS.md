@@ -84,32 +84,32 @@ Deferred to future release. Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| QB-01 | — | Pending |
-| QB-02 | — | Pending |
-| FLOW-01 | — | Pending |
-| FLOW-02 | — | Pending |
-| FLOW-03 | — | Pending |
-| FLOW-04 | — | Pending |
-| VOICE-01 | — | Pending |
-| VOICE-02 | — | Pending |
-| VOICE-03 | — | Pending |
-| TIMER-01 | — | Pending |
-| TIMER-02 | — | Pending |
-| TIMER-03 | — | Pending |
-| SCORE-01 | — | Pending |
-| SCORE-02 | — | Pending |
-| SCORE-03 | — | Pending |
-| UI-01 | — | Pending |
-| UI-02 | — | Pending |
-| UI-03 | — | Pending |
-| UI-04 | — | Pending |
-| UI-05 | — | Pending |
+| QB-01 | Phase 1 | Pending |
+| QB-02 | Phase 1 | Pending |
+| FLOW-01 | Phase 2 | Pending |
+| FLOW-02 | Phase 2 | Pending |
+| FLOW-03 | Phase 3 | Pending |
+| FLOW-04 | Phase 3 | Pending |
+| VOICE-01 | Phase 3 | Pending |
+| VOICE-02 | Phase 3 | Pending |
+| VOICE-03 | Phase 3 | Pending |
+| TIMER-01 | Phase 3 | Pending |
+| TIMER-02 | Phase 3 | Pending |
+| TIMER-03 | Phase 3 | Pending |
+| SCORE-01 | Phase 4 | Pending |
+| SCORE-02 | Phase 4 | Pending |
+| SCORE-03 | Phase 4 | Pending |
+| UI-01 | Phase 2 | Pending |
+| UI-02 | Phase 3 | Pending |
+| UI-03 | Phase 3 | Pending |
+| UI-04 | Phase 3 | Pending |
+| UI-05 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 20 total
-- Mapped to phases: 0
-- Unmapped: 20
+- Mapped to phases: 20
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-05-23*
-*Last updated: 2026-05-23 after initial definition*
+*Last updated: 2026-05-23 after roadmap creation (traceability added)*
