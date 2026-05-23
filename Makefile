@@ -11,9 +11,9 @@ FRONTEND_LOG := $(LOG_DIR)/frontend.log
 FRONTEND_PORT := 5173
 BACKEND_PORT := 8000
 
-# Load .env variables for shell commands
-ENV_FILE := backend/.env
-ENV_EXPORT := $(if $(wildcard $(ENV_FILE)),export $$(grep -v '^#' $(ENV_FILE) | xargs) && ,)
+# Load .env variables for shell commands (uses absolute path since recipes cd)
+ENV_PATH := $(ROOT)/backend/.env
+ENV_EXPORT := $(if $(wildcard $(ENV_PATH)),export $$(grep -v '^#' $(ENV_PATH) | xargs) && ,)
 
 $(PID_DIR) $(LOG_DIR):
 	@mkdir -p $@
