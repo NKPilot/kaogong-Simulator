@@ -45,7 +45,16 @@ IMPORTANT RULES:
 6. Be fair and consistent. The candidate is speaking extemporaneously under time pressure.
 7. For PARTIAL and MISS points, provide a "suggestion" field with 1-2 sentences in Chinese showing what the candidate COULD have said to cover this point well. For COVER points, leave suggestion empty.
 8. Provide an "overallScore" (0-100 integer) reflecting holistic answer quality: 90+ excellent, 80-89 good, 70-79 fair, 60-69 weak, <60 poor.
-9. Provide "strengths" — 2-4 specific strengths found, each with a "title" (short label) and "description" (1-2 sentences). If no clear strengths, provide at least one.
+9. Provide "strengths" — 2-4 specific strengths found, each with a "title" (short label) and "description" (1-2 sentences).
+10. Provide "weaknesses" — 2-4 specific weaknesses or areas to improve, each with a "title" (short label) and "description" (1-2 sentences). Must include actionable improvement advice.
+11. Evaluate the answer on 6 dimensions, each scored 0-10 (10=perfect, 0=absent):
+    - 语言表达 (Language Expression): fluency, clarity, appropriate tone and pacing for oral interview
+    - 逻辑结构 (Logical Structure): clear organization, coherent argument flow, well-structured reasoning
+    - 紧扣题意 (Topic Relevance): how accurately and fully the candidate addresses the specific question asked
+    - 政务思维 (Governmental Thinking): demonstrates administrative perspective, policy awareness, public service mindset
+    - 分析深度 (Analytical Depth): depth of insight, use of concrete examples, sophistication of arguments
+    - 对策可行 (Practical Solutions): feasibility and specificity of proposed solutions or suggestions
+    Score each dimension independently. Be strict — a score of 8+ means near-perfect; 5-7 is average; <5 is weak.
 
 Output format (strict JSON):
 {
@@ -59,8 +68,20 @@ Output format (strict JSON):
     }
   ],
   "overallScore": 75,
+  "dimensions": [
+    {"name": "语言表达", "score": 7, "comment": "表达流畅，但语速略快，部分语句不够精炼"},
+    {"name": "逻辑结构", "score": 8, "comment": "层次分明，从现象到原因再到对策，逻辑清晰"},
+    {"name": "紧扣题意", "score": 6, "comment": "基本回应了题目要求，但部分要点展开不够"},
+    {"name": "政务思维", "score": 5, "comment": "有一定的政策意识，但未能从政府角度深入分析"},
+    {"name": "分析深度", "score": 7, "comment": "分析有一定深度，举了具体例子支撑观点"},
+    {"name": "对策可行", "score": 6, "comment": "对策方向正确，但缺乏具体可操作的细节"}
+  ],
   "strengths": [
     {"title": "逻辑清晰", "description": "回答结构层次分明，从现象分析到原因探讨再到对策建议，逻辑链条完整"}
+  ],
+  "weaknesses": [
+    {"title": "政务视角不足", "description": "未能从政府管理的角度分析问题，建议多使用'政府应...'、'政策层面...'等表述"},
+    {"title": "对策不够具体", "description": "提出的解决措施偏宏观，应增加可操作的具体方案，如引用实际政策或案例"}
   ],
   "feedback": "overall textual feedback in Chinese assessing strengths and areas for improvement"
 }"""
@@ -210,7 +231,7 @@ For EACH numbered scoring point above, determine the coverage verdict:
 IMPORTANT: Ignore ASR homophone errors (同音错别字). Judge by semantic meaning, not exact wording.
 
 For PARTIAL and MISS points, provide a "suggestion" — 1-2 sentences showing what the candidate could have said to cover this point. For COVER points, leave suggestion empty.
-Also provide "overallScore" (integer 0-100) and "strengths" (array with "title" and "description" each).
+Also provide "overallScore" (integer 0-100), "dimensions" (6-dimension evaluation array), "strengths" and "weaknesses" (each an array with "title" and "description").
 
 Output ONLY a valid JSON object (no markdown formatting, no code fences):
 {{
@@ -219,8 +240,15 @@ Output ONLY a valid JSON object (no markdown formatting, no code fences):
     ...
   ],
   "overallScore": 75,
+  "dimensions": [
+    {{"name": "语言表达", "score": 7, "comment": "..."}},
+    ...
+  ],
   "strengths": [
     {{"title": "逻辑清晰", "description": "回答结构层次分明..."}}
+  ],
+  "weaknesses": [
+    {{"title": "政务视角不足", "description": "未能从政府管理角度分析..."}}
   ],
   "feedback": "overall assessment in Chinese, 2-4 sentences covering strengths and areas for improvement"
 }}"""
@@ -288,6 +316,18 @@ def validate_scoring_result(result: dict) -> None:
         result["overallScore"] = 0
     if "strengths" not in result:
         result["strengths"] = []
+    if "weaknesses" not in result:
+        result["weaknesses"] = []
+    if "dimensions" not in result:
+        result["dimensions"] = []
+    # Validate dimensions if present
+    for dim in result.get("dimensions", []):
+        if not isinstance(dim, dict):
+            continue
+        if "score" in dim and not isinstance(dim["score"], (int, float)):
+            dim["score"] = 0
+        if "comment" not in dim:
+            dim["comment"] = ""
 
     logger.info("Scoring result validation passed: %d coverage points", len(coverage))
 
@@ -417,7 +457,9 @@ def evaluate_answer(
             "coveredCount": summary["coveredCount"],
             "totalCount": summary["totalCount"],
             "overallScore": llm_result.get("overallScore", 0),
+            "dimensions": llm_result.get("dimensions", []),
             "strengths": llm_result.get("strengths", []),
+            "weaknesses": llm_result.get("weaknesses", []),
         }
 
         logger.info(

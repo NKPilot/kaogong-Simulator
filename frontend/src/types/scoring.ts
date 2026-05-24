@@ -52,6 +52,16 @@ export interface Strength {
   description: string;
 }
 
+/** A multi-dimensional scoring dimension */
+export interface ScoringDimension {
+  /** Dimension name (e.g., "语言表达", "逻辑结构") */
+  name: string;
+  /** Score 0-10 */
+  score: number;
+  /** Brief comment on this dimension */
+  comment: string;
+}
+
 /**
  * Complete scoring result for a single interview question.
  */
@@ -80,6 +90,10 @@ export interface ScoringResult {
   overallScore?: number;
   /** Strengths identified in the answer (populated when status is 'scored') */
   strengths?: Strength[];
+  /** Weaknesses identified in the answer (populated when status is 'scored') */
+  weaknesses?: Strength[];
+  /** Multi-dimensional scores (populated when status is 'scored') */
+  dimensions?: ScoringDimension[];
 }
 
 /** Model answer response from the API */

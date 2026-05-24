@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { Card, Typography, Collapse, Button, Tabs, Spin, Progress } from 'antd';
 import {
   TrophyOutlined, StarOutlined, BookOutlined, BulbOutlined,
+  WarningOutlined, RiseOutlined, AimOutlined,
 } from '@ant-design/icons';
 import type { ScoringResult, ModelAnswerResult } from '../../../types/scoring';
 import { fetchModelAnswer } from '../../../api/scoringApi';
 import CoverageDots from './CoverageDots';
+import DimensionRadar from './DimensionRadar';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -157,7 +159,7 @@ export default function ScoringCard({
       ),
       children: (
         <div>
-          {/* Overall Score */}
+          {/* Overall Score + Grade */}
           <div style={{ textAlign: 'center', marginBottom: 16 }}>
             <Progress
               type="circle"
@@ -185,12 +187,50 @@ export default function ScoringCard({
 
           <div style={sectionDividerStyle} />
 
+          {/* Multi-Dimensional Radar */}
+          {result.dimensions && result.dimensions.length > 0 && (
+            <>
+              <div style={{ textAlign: 'center', marginBottom: 12 }}>
+                <Text strong style={{ fontSize: 14 }}>
+                  <RiseOutlined style={{ marginRight: 6, color: '#722ED1' }} />
+                  多维度评估
+                </Text>
+              </div>
+              <DimensionRadar dimensions={result.dimensions} size={280} />
+              {/* Dimension detail bars */}
+              <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {result.dimensions.map((d, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Text style={{ fontSize: 12, width: 64, textAlign: 'right', color: '#8C8C8C', flexShrink: 0 }}>
+                      {d.name}
+                    </Text>
+                    <div style={{
+                      flex: 1, height: 8, background: '#F0F0F0', borderRadius: 4, overflow: 'hidden',
+                    }}>
+                      <div style={{
+                        width: `${(d.score / 10) * 100}%`,
+                        height: '100%',
+                        background: `linear-gradient(90deg, #BE1E2D, #FA8C16, #52C41A)`,
+                        backgroundSize: `300% 100%`,
+                        backgroundPosition: `${(d.score / 10) * 100}% 0`,
+                        borderRadius: 4,
+                        transition: 'width 500ms ease-out',
+                      }} />
+                    </div>
+                    <Text strong style={{ fontSize: 12, width: 24, color: '#262626' }}>{d.score}</Text>
+                  </div>
+                ))}
+              </div>
+              <div style={sectionDividerStyle} />
+            </>
+          )}
+
           {/* Strengths */}
           {result.strengths && result.strengths.length > 0 && (
             <>
               <div style={{ marginBottom: 12 }}>
                 <Text strong style={{ fontSize: 14 }}>
-                  <TrophyOutlined style={{ marginRight: 6, color: '#FAAD14' }} />
+                  <TrophyOutlined style={{ marginRight: 6, color: '#52C41A' }} />
                   优点
                 </Text>
                 <div style={strengthsContainerStyle}>
@@ -216,9 +256,40 @@ export default function ScoringCard({
             </>
           )}
 
+          {/* Weaknesses */}
+          {result.weaknesses && result.weaknesses.length > 0 && (
+            <>
+              <div style={{ marginBottom: 12 }}>
+                <Text strong style={{ fontSize: 14 }}>
+                  <WarningOutlined style={{ marginRight: 6, color: '#FA8C16' }} />
+                  不足与改进建议
+                </Text>
+                <div style={strengthsContainerStyle}>
+                  {result.weaknesses.map((w, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        flex: '1 1 100%',
+                        background: '#FFF7E6',
+                        border: '1px solid #FFD591',
+                        borderRadius: 6,
+                        padding: '8px 12px',
+                      }}
+                    >
+                      <Text strong style={{ fontSize: 13, color: '#D46B08' }}>{w.title}</Text>
+                      <br />
+                      <Text style={{ fontSize: 13, color: '#262626' }}>{w.description}</Text>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div style={sectionDividerStyle} />
+            </>
+          )}
+
           {/* Per-point Coverage */}
           <Text strong style={{ fontSize: 14, display: 'block', marginBottom: 8 }}>
-            <BulbOutlined style={{ marginRight: 6, color: '#1890FF' }} />
+            <AimOutlined style={{ marginRight: 6, color: '#1890FF' }} />
             采分点分析
           </Text>
           <CoverageDots coverage={result.coverage || []} />
