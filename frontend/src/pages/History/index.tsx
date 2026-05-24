@@ -255,11 +255,9 @@ export default function HistoryPage() {
                   <Collapse size="small" ghost items={[{
                     key: 'scores',
                     label: <Text type="secondary">查看评分详情</Text>,
-                    children: session.results.map((r) => {
-                      const qTitle = titleMap[r.question_id] || `第${r.question_index + 1}题`;
-                      return (
+                    children: session.results.map((r) => (
                       <div key={r.question_index} style={{ padding: '8px 0', borderBottom: '1px solid #f0f0f0' }}>
-                        <Text strong>{r.question_index + 1}. {qTitle}</Text>
+                        <Text strong>{r.question_index + 1}. {titleMap[r.question_id] || `第${r.question_index + 1}题`}</Text>
                         {r.status === 'scored' ? (
                           <Tag color="green" style={{ marginLeft: 8 }}>{r.coveredCount}/{r.totalCount} 覆盖</Tag>
                         ) : r.status === 'failed' ? (
