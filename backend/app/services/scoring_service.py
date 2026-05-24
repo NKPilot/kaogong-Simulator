@@ -45,7 +45,7 @@ dashscope.api_key = api_key
 # Base directory for recordings (same convention as recording_service.py)
 RECORDINGS_DIR = "recordings"
 
-FFMPEG_BIN = "/tmp/ffmpeg"
+FFMPEG_BIN = "/tmp/ffmpeg" if os.path.exists("/tmp/ffmpeg") else "ffmpeg"
 
 SCORING_SYSTEM_PROMPT = """You are an expert evaluator for civil service exam interview answers. You must think step by step through EACH aspect of the answer before reaching any conclusion.
 
