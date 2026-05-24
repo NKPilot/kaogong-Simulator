@@ -48,8 +48,20 @@ export const useScoringStore = create<ScoringStore>((set, get) => ({
     // Immediate first fetch (no initial delay)
     const poll = async () => {
       try {
-        const results = await fetchScoringResults(sessionId);
-        set({ results });
+        const fetched = await fetchScoringResults(sessionId);
+        const current = get().results;
+
+        // Merge: keep local 'pending' entries not yet reflected in backend results
+        const merged = [...fetched];
+        for (const local of current) {
+          if (
+            local.status === 'pending' &&
+            !fetched.find((f: ScoringResult) => f.questionIndex === local.questionIndex)
+          ) {
+            merged.push(local);
+          }
+        }
+        set({ results: merged });
 
         // Check if all expected questions are terminal
         const allTerminal =

@@ -72,8 +72,17 @@ async def _run_scoring_pipeline(
 ) -> None:
     """Run the scoring pipeline in a background thread and persist the result.
 
-    If scoring fails (after retries), the failed status is still persisted.
+    Writes a 'pending' entry immediately so the frontend polling sees it,
+    then updates to 'scored' or 'failed' when the pipeline completes.
     """
+    # Persist pending status first so the frontend polling picks it up
+    pending = {
+        "question_index": question_index,
+        "question_id": question.get("id", ""),
+        "status": "pending",
+    }
+    save_scoring_result(session_id, question_index, pending)
+
     try:
         result = await asyncio.to_thread(
             evaluate_answer, session_id, question_index, question
