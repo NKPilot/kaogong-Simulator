@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import guidance, health, questions, recording, tts
+from app.routers import asr, guidance, health, minimax_tts, questions, recording, tts
 from app.services.question_service import load_questions
 
 logger = logging.getLogger("interview-simulator")
@@ -56,3 +56,5 @@ app.include_router(questions.router)
 app.include_router(guidance.router)
 app.include_router(recording.router)
 app.include_router(tts.router)
+app.include_router(minimax_tts.router)
+app.include_router(asr.router)

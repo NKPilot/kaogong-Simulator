@@ -1,13 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Typography, Spin, Alert, Button } from 'antd';
+import { SoundOutlined } from '@ant-design/icons';
 import { useQuestionBankStore } from '../../store/questionBankStore';
 import QuestionTable from './components/QuestionTable';
 import SelectionPanel from './components/SelectionPanel';
+import MicTestModal from './components/MicTestModal';
 
 const { Title, Text } = Typography;
 
 export default function QuestionBankPage() {
   const { questions, loading, error, loadQuestions } = useQuestionBankStore();
+  const [micTestOpen, setMicTestOpen] = useState(false);
 
   useEffect(() => {
     loadQuestions();
@@ -45,14 +48,21 @@ export default function QuestionBankPage() {
   return (
     <div>
       {/* Page header */}
-      <div style={{ marginBottom: 24 }}>
-        <Title level={3} style={{ marginBottom: 4, fontSize: 24, fontWeight: 600 }}>
-          题库
-        </Title>
-        <Text type="secondary" style={{ fontSize: 14 }}>
-          请选择 3-4 道题组成本次模拟面试
-        </Text>
+      <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <Title level={3} style={{ marginBottom: 4, fontSize: 24, fontWeight: 600 }}>
+            题库
+          </Title>
+          <Text type="secondary" style={{ fontSize: 14 }}>
+            请选择 3-4 道题组成本次模拟面试
+          </Text>
+        </div>
+        <Button icon={<SoundOutlined />} onClick={() => setMicTestOpen(true)}>
+          麦克风测试
+        </Button>
       </div>
+
+      <MicTestModal open={micTestOpen} onClose={() => setMicTestOpen(false)} />
 
       {/* Empty state */}
       {questions.length === 0 ? (

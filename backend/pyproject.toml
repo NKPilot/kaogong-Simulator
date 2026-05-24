@@ -9,6 +9,8 @@ dependencies = [
     "pydantic>=2.10.0",
     "dashscope>=1.25.11",
     "python-multipart>=0.0.29",
+    "httpx>=0.28.1",
+    "soundfile>=0.13.1",
 ]
 
 [dependency-groups]

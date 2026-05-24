@@ -8,6 +8,7 @@ interface StatusTextBarProps {
   currentIndex: number;
   timerRemaining: number;
   ttsError?: boolean;
+  ttsLoading?: boolean;
 }
 
 const containerStyle: React.CSSProperties = {
@@ -30,6 +31,7 @@ export default function StatusTextBar({
   currentIndex,
   timerRemaining,
   ttsError = false,
+  ttsLoading = false,
 }: StatusTextBarProps) {
   let text = '';
 
@@ -37,6 +39,8 @@ export default function StatusTextBar({
     case 'reading':
       if (ttsError) {
         text = '题目朗读失败，可查看下方题目文字';
+      } else if (ttsLoading) {
+        text = `正在准备第 ${currentIndex + 1} 题朗读...`;
       } else {
         text = `正在朗读第 ${currentIndex + 1} 题...`;
       }

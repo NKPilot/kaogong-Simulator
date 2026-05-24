@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation + Question Bank** - 项目 scaffold、题库数据加载、浏览与选题
 - [x] **Phase 2: Virtual Exam Room** - 虚拟考场展示、数字人考官形象、引导语播报 (completed 2026-05-23)
-- [ ] **Phase 3: Question-by-Question Interview** - TTS 读题、限时思考、语音作答、逐题推进
+- [x] **Phase 3: Question-by-Question Interview** - TTS 读题、限时思考、语音作答、逐题推进
 - [ ] **Phase 4: Scoring & Feedback** - 基于 score_points 的统一评分与反馈展示
 
 ## Phase Details
@@ -51,7 +51,7 @@ Plans:
 **Wave 2** *(blocked on Wave 1 completion)*
 - [x] 02-03-PLAN.md — Frontend integration: guidance toggle, TTS controls, CTA button, ExamRoomPage orchestrator
 
-### Phase 3: Question-by-Question Interview
+### Phase 3: Question-by-Question Interview (completed 2026-05-23)
 **Goal**: Users complete each question in sequence with timed thinking, voice recording, and managed progression.
 **Depends on**: Phase 2
 **Requirements**: FLOW-03, FLOW-04, VOICE-01, VOICE-02, VOICE-03, TIMER-01, TIMER-02, TIMER-03, UI-02, UI-03, UI-04
@@ -75,7 +75,7 @@ Plans:
 - [x] 03-04-PLAN.md — QuestionDrawer, ProgressIndicator, StatusTextBar, TransitionPage, MicPermissionError components
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 03-05-PLAN.md — QuestionInterviewPage orchestrator + router update
+- [x] 03-05-PLAN.md — QuestionInterviewPage orchestrator + router update
 
 ### Phase 4: Scoring & Feedback
 **Goal**: Users receive scores and textual feedback based on comparison with official scoring criteria.
@@ -97,6 +97,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation + Question Bank | 4/4 | Complete | 2026-05-23 |
-| 2. Virtual Exam Room | 3/3 | Complete    | 2026-05-23 |
-| 3. Question-by-Question Interview | 0/5 | Not started | - |
-| 4. Scoring & Feedback | 0/TBD | Not started | - |
+| 2. Virtual Exam Room | 3/3 | Complete | 2026-05-23 |
+| 3. Question-by-Question Interview | 5/5 | Complete | 2026-05-23 |
+| 4. Scoring & Feedback | 0/? | Not started | - |

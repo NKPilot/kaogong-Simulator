@@ -42,5 +42,5 @@ def synthesize_speech(text: str, voice: str = "longxiaocheng_v2") -> bytes:
         speech_rate=1.0,
     )
 
-    audio_bytes = synthesizer.call(text)
+    audio_bytes = synthesizer.call(text, timeout_millis=30_000)
     return audio_bytes

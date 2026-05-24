@@ -43,6 +43,7 @@ export default function QuestionInterviewPage() {
 
   // Local state
   const [ttsError, setTtsError] = useState(false);
+  const [ttsLoading, setTtsLoading] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [playBlocked, setPlayBlocked] = useState(false);
 
@@ -62,6 +63,10 @@ export default function QuestionInterviewPage() {
 
   // Guard ref to prevent double TTS fetch for same question
   const readingProcessedRef = useRef<number>(-1);
+
+  // TTS pre-fetch cache: questionIndex -> object URL
+  const ttsCacheRef = useRef<Map<number, string>>(new Map());
+  const preFetchStartedRef = useRef(false);
 
   // --------------- Timer Management ---------------
 
@@ -233,6 +238,36 @@ export default function QuestionInterviewPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // --------------- Pre-fetch TTS for all questions on interview start ---------------
+
+  useEffect(() => {
+    if (
+      store.questionStatus === 'idle' ||
+      preFetchStartedRef.current
+    ) {
+      return;
+    }
+
+    preFetchStartedRef.current = true;
+
+    const questionTexts = selectedIds
+      .map((id, index) => ({ index, text: questions.find((q) => q.id === id)?.fullText }))
+      .filter((item) => item.text != null) as { index: number; text: string }[];
+
+    questionTexts.forEach(({ index, text }) => {
+      synthesizeSpeech(text)
+        .then((audioData) => {
+          const blob = new Blob([audioData], { type: 'audio/mpeg' });
+          const url = URL.createObjectURL(blob);
+          ttsCacheRef.current.set(index, url);
+        })
+        .catch(() => {
+          // Pre-fetch failed — per-question fetch will handle it when needed
+        });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [store.questionStatus]);
+
   // --------------- Core effect: drive question reading ---------------
 
   useEffect(() => {
@@ -251,20 +286,33 @@ export default function QuestionInterviewPage() {
 
     // Reset per-question state
     setTtsError(false);
+    setTtsLoading(true);
     setPlayBlocked(false);
 
     const question = questions.find((q) => q.id === selectedIds[store.currentIndex]);
     if (!question) return;
 
+    const cachedUrl = ttsCacheRef.current.get(store.currentIndex);
+
     (async () => {
       try {
-        const audioData = await synthesizeSpeech(question.fullText);
-        const blob = new Blob([audioData], { type: 'audio/mpeg' });
-        const url = URL.createObjectURL(blob);
+        let url: string;
+
+        if (cachedUrl) {
+          url = cachedUrl;
+          // Already pre-fetched — no loading delay
+          setTtsLoading(false);
+        } else {
+          // Fallback: fetch on demand (pre-fetch failed or still in flight)
+          const audioData = await synthesizeSpeech(question.fullText);
+          const blob = new Blob([audioData], { type: 'audio/mpeg' });
+          url = URL.createObjectURL(blob);
+          setTtsLoading(false);
+        }
 
         if (audioRef.current) {
-          // Revoke previous object URL if any
-          if (audioRef.current.src) {
+          // Revoke previous object URL if any (but NOT cached URLs)
+          if (audioRef.current.src && !cachedUrl) {
             URL.revokeObjectURL(audioRef.current.src);
           }
           audioRef.current.src = url;
@@ -282,6 +330,7 @@ export default function QuestionInterviewPage() {
         }
       } catch {
         // TTS error degraded mode: show fallback text and auto-advance to thinking
+        setTtsLoading(false);
         setTtsError(true);
         store.setQuestionStatus('thinking');
         store.resetTimer(THINKING_TIME);
@@ -325,6 +374,10 @@ export default function QuestionInterviewPage() {
       if (mediaStreamRef.current) {
         mediaStreamRef.current.getTracks().forEach((t) => t.stop());
       }
+
+      // Revoke cached TTS object URLs
+      ttsCacheRef.current.forEach((url) => URL.revokeObjectURL(url));
+      ttsCacheRef.current.clear();
     };
   }, []);
 
@@ -406,6 +459,7 @@ export default function QuestionInterviewPage() {
           currentIndex={store.currentIndex}
           timerRemaining={store.timerRemaining}
           ttsError={ttsError}
+          ttsLoading={ttsLoading}
         />
 
         {/* Spacer: md = 16px */}

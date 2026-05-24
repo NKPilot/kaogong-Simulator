@@ -4,3 +4,4 @@ logs/
 .env
 
 .playwright-mcp/
+backend/recordings/
