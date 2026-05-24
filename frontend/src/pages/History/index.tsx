@@ -6,7 +6,7 @@ import {
 } from 'antd';
 import {
   HistoryOutlined, CaretRightOutlined, SoundOutlined,
-  DeleteOutlined, RedoOutlined,
+  DeleteOutlined, RedoOutlined, ReloadOutlined,
 } from '@ant-design/icons';
 import { useQuestionBankStore } from '../../store/questionBankStore';
 import CoverageDots from '../ScoringResults/components/CoverageDots';
@@ -52,6 +52,7 @@ export default function HistoryPage() {
   const [playing, setPlaying] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [deleting, setDeleting] = useState(false);
+  const [rescoring, setRescoring] = useState<Set<string>>(new Set());
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   function fetchHistory() {
@@ -121,6 +122,30 @@ export default function HistoryPage() {
     } catch (e: any) {
       message.error(e.message || '删除失败');
     }
+  }
+
+  function rescoreQuestion(sessionId: string, questionIndex: number, questionId: string) {
+    const key = `${sessionId}:${questionIndex}`;
+    setRescoring((prev) => new Set(prev).add(key));
+    fetch(`${API_BASE}/api/scoring/rescore`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: sessionId, question_index: questionIndex, question_id: questionId }),
+    })
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .then(() => {
+        message.success('已触发重新评分，请稍后查看');
+        // Poll for updated results after a delay
+        setTimeout(() => fetchHistory(), 8000);
+      })
+      .catch((e) => message.error(e.message || '重新评分失败'))
+      .finally(() => {
+        setRescoring((prev) => {
+          const next = new Set(prev);
+          next.delete(key);
+          return next;
+        });
+      });
   }
 
   function redoSession(session: SessionItem) {
@@ -262,6 +287,23 @@ export default function HistoryPage() {
                   >
                     再做一遍
                   </Button>
+                  {session.scored_count > 0 && (
+                    <Popconfirm
+                      title="确定重新评分所有已评分题目？"
+                      onConfirm={() => {
+                        session.results.forEach((r) => {
+                          if (r.status === 'scored' && r.question_id) {
+                            rescoreQuestion(session.session_id, r.question_index, r.question_id);
+                          }
+                        });
+                      }}
+                      okText="确定" cancelText="取消"
+                    >
+                      <Button size="small" icon={<ReloadOutlined />}>
+                        重新评分
+                      </Button>
+                    </Popconfirm>
+                  )}
                   <Popconfirm
                     title="确定删除此记录？" onConfirm={() => deleteSingle(session.session_id)}
                     okText="删除" cancelText="取消"
@@ -285,9 +327,36 @@ export default function HistoryPage() {
                                   <Tag color="blue">{(r as any).overallScore}分</Tag>
                                 )}
                                 <Tag color="green">{r.coveredCount}/{r.totalCount} 覆盖</Tag>
+                                <Button
+                                  size="small"
+                                  type="text"
+                                  icon={<ReloadOutlined />}
+                                  loading={rescoring.has(`${session.session_id}:${r.question_index}`)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    rescoreQuestion(session.session_id, r.question_index, r.question_id);
+                                  }}
+                                  style={{ fontSize: 12, color: '#BE1E2D', padding: '0 4px' }}
+                                >
+                                  重评
+                                </Button>
                               </>
                             ) : r.status === 'failed' ? (
-                              <Tag color="red">评分失败</Tag>
+                              <>
+                                <Tag color="red">评分失败</Tag>
+                                <Button
+                                  size="small"
+                                  type="text"
+                                  icon={<ReloadOutlined />}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    rescoreQuestion(session.session_id, r.question_index, r.question_id);
+                                  }}
+                                  style={{ fontSize: 12, color: '#BE1E2D', padding: '0 4px' }}
+                                >
+                                  重试
+                                </Button>
+                              </>
                             ) : (
                               <Tag>评分中</Tag>
                             )}
