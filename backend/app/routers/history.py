@@ -109,7 +109,7 @@ async def delete_session(session_id: str):
     raise HTTPException(status_code=404, detail="Session not found")
 
 
-@router.delete("/api/history")
+@router.post("/api/history/batch-delete")
 async def batch_delete_sessions(session_ids: list[str]):
     """Batch delete multiple sessions."""
     deleted = []

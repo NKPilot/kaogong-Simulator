@@ -93,8 +93,8 @@ export default function HistoryPage() {
     setDeleting(true);
     try {
       const ids = Array.from(selected);
-      const resp = await fetch(`${API_BASE}/api/history`, {
-        method: 'DELETE',
+      const resp = await fetch(`${API_BASE}/api/history/batch-delete`, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(ids),
       });
