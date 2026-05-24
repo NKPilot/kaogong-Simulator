@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons';
 import { useQuestionBankStore } from '../../store/questionBankStore';
 import CoverageDots from '../ScoringResults/components/CoverageDots';
+import DimensionRadar from '../ScoringResults/components/DimensionRadar';
 import type { CoveragePoint } from '../../types/scoring';
 
 const { Title, Text } = Typography;
@@ -428,6 +429,11 @@ export default function HistoryPage() {
                                 )}
                               </div>
                             ))}
+                          </div>
+                        )}
+                        {(r as any).dimensions && (r as any).dimensions.length > 0 && (
+                          <div style={{ marginTop: 8 }}>
+                            <DimensionRadar dimensions={(r as any).dimensions} size={220} />
                           </div>
                         )}
                         {(r as any).reasoning && (
