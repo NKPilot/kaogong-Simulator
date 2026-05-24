@@ -9,46 +9,42 @@ export default function SelectionPanel() {
   const navigate = useNavigate();
 
   const selectedCount = selectedIds.length;
-  const selectedQuestions = questions.filter(q => selectedIds.includes(q.id));
+  const selectedQuestions = questions.filter((q) => selectedIds.includes(q.id));
 
   function getStatusText(): string {
     if (selectedCount === 0) return '请选择题日';
     return `已选择 ${selectedCount} 道题，可以开始面试`;
   }
 
-  function handleStartInterview() {
-    if (canProceed()) {
-      navigate('/exam-room');
-    }
-  }
-
   return (
     <div
       style={{
         marginTop: 24,
-        padding: 20,
-        background: '#FFFFFF',
-        borderRadius: 6,
-        border: '1px solid #E8E8E8',
+        padding: '20px 24px',
+        background: 'var(--paper-card)',
+        borderRadius: 'var(--radius)',
+        border: '1px solid var(--divider)',
+        boxShadow: 'var(--shadow-sm)',
       }}
     >
-      {/* Selection count + status */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Badge
             count={selectedCount}
             style={{
-              backgroundColor: selectedCount >= 1 ? '#BE1E2D' : '#D9D9D9',
-              color: selectedCount >= 1 ? '#FFFFFF' : '#8C8C8C',
-              fontSize: 14,
+              backgroundColor: selectedCount >= 1 ? 'var(--vermillion)' : '#D9D3C8',
+              color: selectedCount >= 1 ? '#FFF' : 'var(--ink-muted)',
+              fontSize: 13,
               fontWeight: 600,
+              minWidth: 22,
+              height: 22,
+              lineHeight: '22px',
             }}
-            overflowCount={4}
           />
           <Text
             style={{
               fontSize: 14,
-              color: selectedCount >= 1 ? '#262626' : '#8C8C8C',
+              color: selectedCount >= 1 ? 'var(--ink)' : 'var(--ink-muted)',
             }}
           >
             {getStatusText()}
@@ -58,33 +54,42 @@ export default function SelectionPanel() {
           type="primary"
           size="large"
           disabled={!canProceed()}
-          onClick={handleStartInterview}
-          style={{ minWidth: 140 }}
+          onClick={() => canProceed() && navigate('/exam-room')}
+          style={{
+            minWidth: 140,
+            background: canProceed() ? 'var(--vermillion)' : undefined,
+            boxShadow: canProceed() ? '0 2px 6px var(--vermillion-glow)' : undefined,
+          }}
         >
           开始面试
         </Button>
       </div>
 
-      {/* Alert when no question selected */}
       {selectedCount === 0 && (
         <Alert
           message="请至少选择 1 道题"
           type="warning"
           showIcon
-          style={{ marginBottom: 0 }}
+          style={{ marginTop: 12, marginBottom: 0 }}
         />
       )}
 
-      {/* Selected question chips */}
       {selectedQuestions.length > 0 && (
         <div style={{ marginTop: 12 }}>
           <Space size={[8, 8]} wrap>
-            {selectedQuestions.map(q => (
+            {selectedQuestions.map((q) => (
               <Tag
                 key={q.id}
                 closable
                 onClose={() => useQuestionBankStore.getState().toggleSelect(q.id)}
-                style={{ fontSize: 13, padding: '2px 8px' }}
+                style={{
+                  fontSize: 12,
+                  padding: '2px 10px',
+                  borderRadius: 4,
+                  background: 'var(--vermillion-light)',
+                  border: '1px solid var(--vermillion-glow)',
+                  color: 'var(--vermillion)',
+                }}
               >
                 {q.title}
               </Tag>

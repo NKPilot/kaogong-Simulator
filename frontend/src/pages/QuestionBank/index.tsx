@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Typography, Spin, Alert, Button, Space } from 'antd';
+
 import { SoundOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useQuestionBankStore } from '../../store/questionBankStore';
 import QuestionTable from './components/QuestionTable';
@@ -50,20 +51,28 @@ export default function QuestionBankPage() {
   return (
     <div>
       {/* Page header */}
-      <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div style={{ marginBottom: 28, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <Title level={3} style={{ marginBottom: 4, fontSize: 24, fontWeight: 600 }}>
+          <Title level={2} style={{ marginBottom: 4, fontSize: 22, fontWeight: 600, color: 'var(--ink)' }}>
             题库
           </Title>
-          <Text type="secondary" style={{ fontSize: 14 }}>
-            请选择题日，支持逐题作答
+          <Text type="secondary" style={{ fontSize: 13 }}>
+            选择题日，逐题作答
           </Text>
         </div>
-        <Space>
-          <Button icon={<HistoryOutlined />} onClick={() => navigate('/history')}>
+        <Space size={8}>
+          <Button
+            icon={<HistoryOutlined />}
+            onClick={() => navigate('/history')}
+            style={{ borderColor: 'var(--divider)', color: 'var(--ink-secondary)' }}
+          >
             历史记录
           </Button>
-          <Button icon={<SoundOutlined />} onClick={() => setSettingsOpen(true)}>
+          <Button
+            icon={<SoundOutlined />}
+            onClick={() => setSettingsOpen(true)}
+            style={{ borderColor: 'var(--divider)', color: 'var(--ink-secondary)' }}
+          >
             设备设置
           </Button>
         </Space>

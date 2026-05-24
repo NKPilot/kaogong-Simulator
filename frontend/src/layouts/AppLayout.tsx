@@ -2,11 +2,10 @@ import { Layout, Typography } from 'antd';
 import { Outlet } from 'react-router-dom';
 
 const { Header, Content } = Layout;
-const { Title } = Typography;
 
 export default function AppLayout() {
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout style={{ minHeight: '100vh', background: 'var(--paper)' }}>
       <Header
         style={{
           display: 'flex',
@@ -14,22 +13,31 @@ export default function AppLayout() {
           position: 'sticky',
           top: 0,
           zIndex: 100,
+          background: 'var(--vermillion)',
+          height: 48,
+          padding: '0 32px',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
         }}
       >
-        <Title
-          level={2}
+        <span
           style={{
-            color: '#FFFFFF',
-            margin: 0,
-            fontSize: 20,
-            fontWeight: 700,
-            letterSpacing: 1,
+            color: '#FFF',
+            fontSize: 16,
+            fontWeight: 600,
+            letterSpacing: '0.05em',
           }}
         >
           江苏公务员面试模拟器
-        </Title>
+        </span>
       </Header>
-      <Content style={{ padding: '32px', maxWidth: 960, margin: '0 auto', width: '100%' }}>
+      <Content
+        style={{
+          padding: '40px 32px',
+          maxWidth: 960,
+          margin: '0 auto',
+          width: '100%',
+        }}
+      >
         <Outlet />
       </Content>
     </Layout>
