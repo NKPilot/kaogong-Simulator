@@ -19,16 +19,17 @@ def synthesize_speech(
     text: str,
     voice: str = "longxiaocheng_v2",
     speech_rate: float = 1.0,
-    vol: float = 1.0,
+    pitch_rate: float = 1.0,
+    vol: int = 50,
 ) -> bytes:
     """Synthesize speech from text using DashScope TTS.
 
     Args:
         text: The text to synthesize (max 500 characters).
-        voice: DashScope voice ID. Default is "longxiaocheng_v2"
-               (formal male voice, steady, broadcast-quality).
+        voice: DashScope voice ID. Default is "longxiaocheng_v2".
         speech_rate: Speech speed, range [0.5, 2.0].
-        vol: Volume, range (0, 10].
+        pitch_rate: Pitch adjustment, range [0.5, 2.0].
+        vol: Volume, range [0, 100].
 
     Returns:
         Complete MP3 audio bytes.
@@ -47,8 +48,18 @@ def synthesize_speech(
         voice=voice,
         format=AudioFormat.MP3_22050HZ_MONO_256KBPS,
         speech_rate=speech_rate,
-        volume=int(vol * 100),
+        pitch_rate=pitch_rate,
+        volume=vol,
     )
 
     audio_bytes = synthesizer.call(text, timeout_millis=30_000)
     return audio_bytes
+
+
+# Available DashScope voices for civil service exam interview scenario
+AVAILABLE_VOICES = [
+    {"id": "longxiaocheng_v2", "name": "龙小成", "gender": "male", "style": "正式播报", "description": "沉稳男声，适合考试播报场景"},
+    {"id": "longxiaochun_v2", "name": "龙小纯", "gender": "female", "style": "知性温柔", "description": "知性女声，语速适中"},
+    {"id": "longxiaoxia_v2", "name": "龙小夏", "gender": "female", "style": "活泼清晰", "description": "清晰女声，吐字清楚"},
+    {"id": "longxiaobai_v2", "name": "龙小白", "gender": "male", "style": "自然亲切", "description": "自然男声，如真人朗读"},
+]

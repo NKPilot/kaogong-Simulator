@@ -2,7 +2,8 @@
 
 Provides POST /api/tts/synthesize endpoint that accepts text and voice,
 calls the DashScope TTS service, and streams the resulting MP3 audio
-back via chunked transfer encoding.
+back via chunked transfer encoding. Also provides GET /api/tts/voices
+to list available voice options.
 """
 
 import asyncio
@@ -12,7 +13,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
-from app.services.tts_service import synthesize_speech
+from app.services.tts_service import synthesize_speech, AVAILABLE_VOICES
 
 logger = logging.getLogger("interview-simulator")
 
@@ -39,54 +40,46 @@ class TTSRequest(BaseModel):
         le=2.0,
         description="Speech speed",
     )
-    vol: float = Field(
+    pitch_rate: float = Field(
         default=1.0,
-        gt=0.0,
-        le=10.0,
-        description="Volume",
+        ge=0.5,
+        le=2.0,
+        description="Pitch adjustment",
+    )
+    vol: int = Field(
+        default=50,
+        ge=0,
+        le=100,
+        description="Volume level (0-100)",
     )
 
 
-async def audio_chunk_generator(text: str, voice: str, speech_rate: float, vol: float):
-    """Generate audio byte chunks for streaming response.
-
-    Runs the blocking DashScope SDK call in a thread pool, then
-    yields the resulting bytes in fixed-size chunks.
-
-    Args:
-        text: Text to synthesize.
-        voice: DashScope voice ID.
-
-    Yields:
-        Bytes of audio data (8192-byte chunks).
-    """
+async def audio_chunk_generator(
+    text: str, voice: str, speech_rate: float, pitch_rate: float, vol: int
+):
+    """Generate audio byte chunks for streaming response."""
     audio_bytes: bytes = await asyncio.to_thread(
-        synthesize_speech, text, voice, speech_rate, vol
+        synthesize_speech, text, voice, speech_rate, pitch_rate, vol
     )
     for i in range(0, len(audio_bytes), CHUNK_SIZE):
         yield audio_bytes[i : i + CHUNK_SIZE]
 
 
+@router.get("/api/tts/voices")
+async def list_voices():
+    """List available TTS voices for the interview simulator."""
+    return {"voices": AVAILABLE_VOICES}
+
+
 @router.post("/api/tts/synthesize")
 async def synthesize(request: TTSRequest) -> StreamingResponse:
-    """Synthesize speech from text and stream MP3 audio back.
-
-    Accepts text and optional voice parameter, returns chunked MP3
-    audio via StreamingResponse.
-
-    Args:
-        request: TTSRequest with text and voice fields.
-
-    Returns:
-        StreamingResponse with audio/mpeg content type.
-
-    Raises:
-        HTTPException 422: If input validation fails (via Pydantic).
-        HTTPException 502: If DashScope synthesis fails.
-    """
+    """Synthesize speech from text and stream MP3 audio back."""
     try:
         return StreamingResponse(
-            audio_chunk_generator(request.text, request.voice, request.speech_rate, request.vol),
+            audio_chunk_generator(
+                request.text, request.voice, request.speech_rate,
+                request.pitch_rate, request.vol,
+            ),
             media_type="audio/mpeg",
             headers={
                 "Cache-Control": "no-cache",

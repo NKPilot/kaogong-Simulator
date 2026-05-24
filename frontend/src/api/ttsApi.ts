@@ -3,12 +3,34 @@ const TTS_TIMEOUT_MS = 30_000;
 
 export type TTSProvider = 'dashscope' | 'minimax';
 
-/** Switch this to change the TTS provider globally */
-export const TTS_PROVIDER: TTSProvider = 'minimax';
+export interface VoiceOption {
+  id: string;
+  name: string;
+  gender: string;
+  style: string;
+  description: string;
+}
 
-function getTtsParams() {
-  // Read from window.__TTS_PARAMS__ set by DeviceSettingsPanel, or defaults
-  const defaults = { speed: 1.2, pitch: 0, vol: 1.0 };
+/** Switch this to change the TTS provider globally */
+export const TTS_PROVIDER: TTSProvider = 'dashscope';
+
+/** Fetch available voices from backend */
+export async function fetchVoices(): Promise<VoiceOption[]> {
+  const resp = await fetch(`${API_BASE_URL}/api/tts/voices`);
+  if (!resp.ok) throw new Error(`Failed to fetch voices: ${resp.status}`);
+  const data = await resp.json();
+  return data.voices;
+}
+
+interface TtsParams {
+  speed: number;   // 0.5 - 2.0
+  pitch: number;   // -12 - +12
+  vol: number;     // 10 - 100
+  voice: string;   // voice ID
+}
+
+function getTtsParams(): TtsParams {
+  const defaults: TtsParams = { speed: 1.0, pitch: 0, vol: 50, voice: 'longxiaocheng_v2' };
   try {
     const stored = (window as any).__TTS_PARAMS__;
     if (stored) return { ...defaults, ...stored };
@@ -16,18 +38,24 @@ function getTtsParams() {
   return defaults;
 }
 
-const PROVIDER_CONFIG: Record<TTSProvider, { endpoint: string; voice: string; body: (text: string) => unknown }> = {
+const PROVIDER_CONFIG: Record<TTSProvider, { endpoint: string; body: (text: string) => unknown }> = {
   dashscope: {
     endpoint: `${API_BASE_URL}/api/tts/synthesize`,
-    voice: 'longxiaocheng_v2',
     body: (text) => {
       const p = getTtsParams();
-      return { text, voice: 'longxiaocheng_v2', speech_rate: p.speed, vol: p.vol };
+      // DashScope: pitch_rate is 0.5-2.0, map from -12..+12
+      const pitch_rate = 1.0 + p.pitch / 24;
+      return {
+        text,
+        voice: p.voice,
+        speech_rate: p.speed,
+        pitch_rate: Math.round(pitch_rate * 100) / 100,
+        vol: p.vol,
+      };
     },
   },
   minimax: {
     endpoint: `${API_BASE_URL}/api/tts/minimax`,
-    voice: 'Chinese (Mandarin)_Male_Announcer',
     body: (text) => {
       const p = getTtsParams();
       return {
@@ -35,7 +63,7 @@ const PROVIDER_CONFIG: Record<TTSProvider, { endpoint: string; voice: string; bo
         voice: 'Chinese (Mandarin)_Male_Announcer',
         model: 'speech-2.8-hd',
         speed: p.speed,
-        vol: p.vol,
+        vol: p.vol / 100,
         pitch: p.pitch,
       };
     },
@@ -63,12 +91,4 @@ export async function synthesizeSpeech(text: string): Promise<ArrayBuffer> {
   } finally {
     clearTimeout(timeoutId);
   }
-}
-
-/** Preview a short sample — returns first few seconds of audio as blob URL */
-export async function previewSpeech(text: string, maxChars: number = 30): Promise<string> {
-  const previewText = text.slice(0, maxChars);
-  const buffer = await synthesizeSpeech(previewText);
-  const blob = new Blob([buffer], { type: 'audio/mpeg' });
-  return URL.createObjectURL(blob);
 }

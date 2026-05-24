@@ -1,5 +1,6 @@
 {
-  "speed": 1.2,
+  "speed": 1.0,
   "pitch": 0,
-  "vol": 1.0
+  "vol": 50,
+  "voice": "longxiaocheng_v2"
 }

@@ -1,7 +1,7 @@
 import {
   useState, useRef, useCallback, useEffect,
 } from 'react';
-import { Modal, Button, Space, Tag, Typography, Card, Slider, Divider } from 'antd';
+import { Modal, Button, Space, Tag, Typography, Card, Slider, Divider, Select } from 'antd';
 import {
   AudioOutlined,
   StopOutlined,
@@ -113,25 +113,15 @@ export default function DeviceSettingsPanel({ open, onClose }: Props) {
   const [ttsPlaying, setTtsPlaying] = useState(false);
   const ttsAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Load config on mount
-  useEffect(() => { tts.loadConfig(); }, []);
+  // Load voices on mount
+  useEffect(() => { tts.loadVoices(); }, []);
 
   // Sync params to window.__TTS_PARAMS__ so ttsApi.ts reads them
   useEffect(() => {
-    (window as any).__TTS_PARAMS__ = { speed: tts.speed, pitch: tts.pitch, vol: tts.vol };
-  }, [tts.speed, tts.pitch, tts.vol]);
-
-  // Persist to tts-config.json
-  const persistConfig = useCallback((s: number, p: number, v: number) => {
-    try {
-      const blob = new Blob([JSON.stringify({ speed: s, pitch: p, vol: v }, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'tts-config.json';
-      // Can't auto-save to public/ — just keep in memory + localStorage fallback
-      localStorage.setItem('tts-config', JSON.stringify({ speed: s, pitch: p, vol: v }));
-    } catch { /* noop */ }
-  }, []);
+    (window as any).__TTS_PARAMS__ = {
+      speed: tts.speed, pitch: tts.pitch, vol: tts.vol, voice: tts.voice,
+    };
+  }, [tts.speed, tts.pitch, tts.vol, tts.voice]);
 
   /* ---- mic test handlers (same logic as MicTestModal) ---- */
 
@@ -245,7 +235,6 @@ export default function DeviceSettingsPanel({ open, onClose }: Props) {
     setTtsPlaying(false);
     tts.setPlaying(null);
     resetMic();
-    persistConfig(tts.speed, tts.pitch, tts.vol);
     onClose();
   };
 
@@ -262,6 +251,21 @@ export default function DeviceSettingsPanel({ open, onClose }: Props) {
 
         {/* ====== TTS Voice Settings ====== */}
         <Card size="small" title={<><SoundOutlined /> 语音设置</>}>
+          {/* Voice selector */}
+          <div style={{ marginBottom: 12 }}>
+            <Text type="secondary" style={{ display: 'block', marginBottom: 4 }}>音色</Text>
+            <Select
+              value={tts.voice}
+              onChange={(v) => tts.setVoice(v)}
+              style={{ width: '100%' }}
+              loading={tts.voicesLoading}
+              options={tts.voices.map((v) => ({
+                value: v.id,
+                label: `${v.name} (${v.gender === 'male' ? '男' : '女'}·${v.style})`,
+              }))}
+            />
+          </div>
+
           {/* Sample buttons */}
           <div style={{ marginBottom: 16 }}>
             <Text type="secondary" style={{ display: 'block', marginBottom: 8 }}>试听语音效果</Text>
@@ -291,7 +295,7 @@ export default function DeviceSettingsPanel({ open, onClose }: Props) {
             <Slider
               min={0.5} max={2.0} step={0.1}
               value={tts.speed}
-              onChange={(v) => { tts.setSpeed(v); persistConfig(v, tts.pitch, tts.vol); }}
+              onChange={(v) => tts.setSpeed(v)}
               marks={{ 0.5: '0.5x', 1.0: '1.0x', 1.5: '1.5x', 2.0: '2.0x' }}
             />
           </div>
@@ -302,19 +306,19 @@ export default function DeviceSettingsPanel({ open, onClose }: Props) {
             <Slider
               min={-12} max={12} step={1}
               value={tts.pitch}
-              onChange={(v) => { tts.setPitch(v); persistConfig(tts.speed, v, tts.vol); }}
+              onChange={(v) => tts.setPitch(v)}
               marks={{ '-12': '-12', 0: '0', 12: '+12' }}
             />
           </div>
 
           {/* Volume slider */}
           <div>
-            <Text>音量 <Text type="secondary">{Math.round(tts.vol * 100)}%</Text></Text>
+            <Text>音量 <Text type="secondary">{tts.vol}%</Text></Text>
             <Slider
-              min={0.1} max={2.0} step={0.1}
+              min={10} max={100} step={5}
               value={tts.vol}
-              onChange={(v) => { tts.setVol(v); persistConfig(tts.speed, tts.pitch, v); }}
-              marks={{ 0.5: '50%', 1.0: '100%', 1.5: '150%', 2.0: '200%' }}
+              onChange={(v) => tts.setVol(v)}
+              marks={{ 10: '10%', 30: '30%', 50: '50%', 80: '80%', 100: '100%' }}
             />
           </div>
         </Card>
