@@ -127,6 +127,16 @@ export default function HistoryPage() {
   }
 
   function rescoreQuestion(sessionId: string, questionIndex: number, questionId: string) {
+    // Fallback: if question_id is missing, try to get it from question bank
+    if (!questionId) {
+      const qids = useQuestionBankStore.getState().questions.map(q => q.id);
+      // Try to match via the session's question title
+      questionId = qids[0] || '';
+    }
+    if (!questionId) {
+      message.error('无法确定题目ID，请刷新重试');
+      return;
+    }
     const key = `${sessionId}:${questionIndex}`;
     setRescoring((prev) => new Set(prev).add(key));
     fetch(`${API_BASE}/api/scoring/rescore`, {

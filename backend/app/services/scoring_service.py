@@ -45,7 +45,6 @@ dashscope.api_key = api_key
 # Base directory for recordings (same convention as recording_service.py)
 RECORDINGS_DIR = "recordings"
 
-# Path to static ffmpeg binary
 FFMPEG_BIN = "/tmp/ffmpeg"
 
 SCORING_SYSTEM_PROMPT = """You are an expert evaluator for civil service exam interview answers. You must think step by step through EACH aspect of the answer before reaching any conclusion.
@@ -533,6 +532,13 @@ def save_scoring_result(session_id: str, question_index: int, result: dict) -> N
 
     # Load existing results
     existing = load_scoring_results(session_id)
+
+    # Preserve question_id from existing entry if new result is missing it
+    for entry in existing:
+        if entry.get("question_index") == result.get("question_index"):
+            if not result.get("question_id") and entry.get("question_id"):
+                result["question_id"] = entry["question_id"]
+            break
 
     # Upsert: replace entry with matching question_index, or append if new
     replaced = False
