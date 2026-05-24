@@ -53,6 +53,8 @@ export default function HistoryPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [deleting, setDeleting] = useState(false);
   const [rescoring, setRescoring] = useState<Set<string>>(new Set());
+  const [modelAnswers, setModelAnswers] = useState<Record<string, string>>({});
+  const [loadingModel, setLoadingModel] = useState<Set<string>>(new Set());
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   function fetchHistory() {
@@ -143,6 +145,26 @@ export default function HistoryPage() {
         setRescoring((prev) => {
           const next = new Set(prev);
           next.delete(key);
+          return next;
+        });
+      });
+  }
+
+  function fetchModelAnswerForQuestion(questionId: string) {
+    if (modelAnswers[questionId] || loadingModel.has(questionId)) return;
+    setLoadingModel((prev) => new Set(prev).add(questionId));
+    fetch(`${API_BASE}/api/scoring/model-answer/${encodeURIComponent(questionId)}`)
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .then((d) => {
+        if (d.modelAnswer) {
+          setModelAnswers((prev) => ({ ...prev, [questionId]: d.modelAnswer }));
+        }
+      })
+      .catch(() => message.error('获取参考答案失败'))
+      .finally(() => {
+        setLoadingModel((prev) => {
+          const next = new Set(prev);
+          next.delete(questionId);
           return next;
         });
       });
@@ -376,6 +398,32 @@ export default function HistoryPage() {
                           <Text type="secondary" style={{ display: 'block', fontSize: 13, marginTop: 4 }}>
                             {r.feedback}
                           </Text>
+                        )}
+                        {r.status === 'scored' && r.question_id && (
+                          <div style={{ marginTop: 8 }}>
+                            {modelAnswers[r.question_id] ? (
+                              <div style={{
+                                background: '#FAFAFA', border: '1px solid #F0F0F0',
+                                borderRadius: 6, padding: 10, marginTop: 6,
+                                fontSize: 13, lineHeight: 1.6, color: '#595959',
+                              }}>
+                                <Text type="secondary" style={{ fontSize: 11, display: 'block', marginBottom: 4 }}>
+                                  参考回答（AI 生成）
+                                </Text>
+                                {modelAnswers[r.question_id]}
+                              </div>
+                            ) : (
+                              <Button
+                                size="small"
+                                type="link"
+                                loading={loadingModel.has(r.question_id)}
+                                onClick={() => fetchModelAnswerForQuestion(r.question_id)}
+                                style={{ fontSize: 12, padding: 0 }}
+                              >
+                                查看参考答案
+                              </Button>
+                            )}
+                          </div>
                         )}
                       </div>
                     ))}]} />
