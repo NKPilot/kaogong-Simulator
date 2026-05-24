@@ -36,7 +36,7 @@ def _load_dotenv(env_path: str) -> None:
                 os.environ[key] = val
 
 if not os.environ.get("DASHSCOPE_API_KEY"):
-    _load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+    _load_dotenv(Path(__file__).resolve().parent.parent.parent / ".env")
 
 api_key = os.environ.get("DASHSCOPE_API_KEY", "")
 os.environ["DASHSCOPE_API_KEY"] = api_key  # dashscope reads os.environ directly
