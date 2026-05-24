@@ -182,8 +182,14 @@ async def get_model_answer(question_id: str) -> dict:
     if cached:
         return {"question_id": question_id, "modelAnswer": cached, "cached": True}
 
-    # Load question and generate
+    # Load question — return pre-written reference answer if available
     question = _validate_and_load_question(question_id)
+    ref_answer = question.get("referenceAnswer", "")
+    if ref_answer:
+        _model_answer_cache[question_id] = ref_answer
+        return {"question_id": question_id, "modelAnswer": ref_answer, "cached": False}
+
+    # Fallback: generate via LLM
     score_points_text = question.get("scorePoints", "")
     points = parse_score_points(score_points_text)
     if not points:
