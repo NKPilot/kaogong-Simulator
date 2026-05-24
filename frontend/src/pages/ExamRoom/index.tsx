@@ -6,7 +6,6 @@ import { fetchGuidance } from '../../api/guidanceApi';
 import { synthesizeSpeech } from '../../api/ttsApi';
 import { useQuestionBankStore } from '../../store/questionBankStore';
 import RedBanner from './components/RedBanner';
-import ExaminerRow from './components/ExaminerRow';
 import GuidanceToggle from './components/GuidanceToggle';
 import TTSControls from './components/TTSControls';
 import CTAButton from './components/CTAButton';
@@ -213,7 +212,14 @@ export default function ExamRoomPage() {
 
       {/* Centered content area */}
       <div style={{ maxWidth: 960, margin: '0 auto', paddingTop: 0 }}>
-        <ExaminerRow />
+        {/* First-person perspective exam room scene */}
+        <div style={{ marginTop: 24, borderRadius: 8, overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.1)' }}>
+          <img
+            src="/examiners/exam-room-jiangsu.png"
+            alt="第一视角考场场景"
+            style={{ width: '100%', height: 'auto', display: 'block' }}
+          />
+        </div>
 
         {/* Spacer: 2xl = 48px */}
         <div style={{ height: 48 }} />
