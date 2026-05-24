@@ -365,7 +365,7 @@ def evaluate_answer(
         msg = f"Recording not found: {webm_path}"
         logger.error(msg)
         if retry_count >= 1:
-            return {"status": "failed", "error": msg, "question_index": question_index}
+            return {"status": "failed", "error": msg, "question_index": question_index, "question_id": question.get("id", "")}
         return evaluate_answer(session_id, question_index, question, retry_count=retry_count + 1)
 
     wav_path = None
@@ -399,6 +399,7 @@ def evaluate_answer(
                 "status": "failed",
                 "error": "无有效语音",
                 "question_index": question_index,
+                "question_id": question.get("id", ""),
             }
 
         # Step 3: Run ASR via existing service
@@ -412,6 +413,7 @@ def evaluate_answer(
                 "status": "failed",
                 "error": "语音识别无结果",
                 "question_index": question_index,
+                "question_id": question.get("id", ""),
             }
 
         # Step 4: Parse scorePoints
@@ -484,14 +486,14 @@ def evaluate_answer(
         msg = f"FFmpeg conversion failed: {e}"
         logger.error(msg)
         if retry_count >= 1:
-            return {"status": "failed", "error": msg, "question_index": question_index}
+            return {"status": "failed", "error": msg, "question_index": question_index, "question_id": question.get("id", "")}
         return evaluate_answer(session_id, question_index, question, retry_count=retry_count + 1)
 
     except (RuntimeError, ValueError) as e:
         msg = f"Scoring pipeline error: {e}"
         logger.error(msg)
         if retry_count >= 1:
-            return {"status": "failed", "error": str(e), "question_index": question_index}
+            return {"status": "failed", "error": str(e), "question_index": question_index, "question_id": question.get("id", "")}
         logger.info("Retrying scoring pipeline (retry %d -> %d)", retry_count, retry_count + 1)
         time.sleep(1)  # Brief delay before retry
         return evaluate_answer(session_id, question_index, question, retry_count=retry_count + 1)
@@ -500,7 +502,7 @@ def evaluate_answer(
         msg = f"Unexpected scoring error: {e}"
         logger.exception(msg)
         if retry_count >= 1:
-            return {"status": "failed", "error": str(e), "question_index": question_index}
+            return {"status": "failed", "error": str(e), "question_index": question_index, "question_id": question.get("id", "")}
         time.sleep(1)
         return evaluate_answer(session_id, question_index, question, retry_count=retry_count + 1)
 
