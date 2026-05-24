@@ -1,6 +1,7 @@
 """Unit tests for scoring_service.py — scorePoints parsing, prompt construction, coverage computation."""
 
 import json
+import uuid
 from pathlib import Path
 
 import pytest
@@ -62,7 +63,8 @@ class TestParseScorePoints:
         points = parse_score_points(text)
         assert len(points) >= 2
         # First section should treat 'l、' as '1、'
-        assert points[0]["section"] in ("评价集体氛围", "")
+        # Section heading includes text until next top-level marker (e.g., "2、")
+        assert "评价集体氛围" in points[0]["section"]
         # Verify the OCR artifact was normalized
         ids = [p["id"] for p in points]
         assert 1 in ids
@@ -218,6 +220,7 @@ class TestSaveLoadScoringResults:
 
     def test_save_and_load_scoring_results(self, temp_scoring_dir):
         """Round-trip: save a scoring result, then load it back."""
+        session_id = str(uuid.uuid4())
         result = {
             "question_index": 0,
             "question_id": "js_exam_00b2138b2b_q01",
@@ -237,8 +240,6 @@ class TestSaveLoadScoringResults:
             "coveredCount": 1,
             "totalCount": 5,
         }
-        # Extract session_id from the temp dir path (the dir name)
-        session_id = Path(temp_scoring_dir).name
 
         save_scoring_result(session_id, 0, result)
         results = load_scoring_results(session_id)
@@ -249,13 +250,13 @@ class TestSaveLoadScoringResults:
 
     def test_load_scoring_results_empty(self, temp_scoring_dir):
         """Loading from a non-existent scoring.json returns empty list."""
-        session_id = Path(temp_scoring_dir).name
+        session_id = str(uuid.uuid4())
         results = load_scoring_results(session_id)
         assert results == []
 
     def test_scoring_status_flow(self, temp_scoring_dir):
         """Status transitions: pending -> scored on success, pending -> failed on error."""
-        session_id = Path(temp_scoring_dir).name
+        session_id = str(uuid.uuid4())
 
         # Successful scoring: status should be "scored"
         success_result = {
