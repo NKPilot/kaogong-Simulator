@@ -86,8 +86,19 @@ Plans:
   2. User sees a clear summary of overall performance
   3. For each question, user sees a score and which key points they covered vs missed
   4. User receives textual feedback for each question based on score_points comparison
-**Plans**: TBD
+**Plans**: 4 plans
 **UI hint**: yes
+
+Plans:
+**Wave 1**
+- [ ] 04-01-PLAN.md — Backend scoring pipeline (scoring_service + router + main.py integration)
+- [ ] 04-02-PLAN.md — Frontend data layer (scoring types, API module, Zustand store)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 04-03-PLAN.md — Scoring UI components (ScoringCard, CoverageDots, PendingCard, ErrorCard)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 04-04-PLAN.md — Results page orchestrator, /results route, scoring trigger integration + human verification
 
 ## Progress
 
@@ -99,4 +110,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | 1. Foundation + Question Bank | 4/4 | Complete | 2026-05-23 |
 | 2. Virtual Exam Room | 3/3 | Complete | 2026-05-23 |
 | 3. Question-by-Question Interview | 5/5 | Complete | 2026-05-23 |
-| 4. Scoring & Feedback | 0/? | Not started | - |
+| 4. Scoring & Feedback | 0/4 | Not started | - |
