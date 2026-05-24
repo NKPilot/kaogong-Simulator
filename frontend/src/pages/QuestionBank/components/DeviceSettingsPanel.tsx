@@ -10,8 +10,8 @@ import {
   SoundOutlined,
   PauseCircleOutlined,
 } from '@ant-design/icons';
-import { useTtsSettingsStore } from '../../store/ttsSettingsStore';
-import { synthesizeSpeech } from '../../api/ttsApi';
+import { useTtsSettingsStore } from '../../../store/ttsSettingsStore';
+import { synthesizeSpeech } from '../../../api/ttsApi';
 
 const { Text } = Typography;
 
