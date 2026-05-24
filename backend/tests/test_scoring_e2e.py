@@ -19,8 +19,9 @@ except ImportError:
 
 @pytest.fixture
 def client():
-    """Return a TestClient for the FastAPI app."""
-    return TestClient(app)
+    """Return a TestClient for the FastAPI app with lifespan triggered."""
+    with TestClient(app) as c:
+        yield c
 
 
 @pytest.fixture
@@ -111,8 +112,9 @@ class TestGetResultsEndpoint:
         assert response.json() == []
 
     def test_get_results_invalid_session_id(self, client):
-        """GET with path-traversal session_id -> 422."""
-        response = client.get("/api/scoring/results/../../etc/passwd")
+        """GET with non-UUID-format session_id -> 422."""
+        # Session ID must match ^[a-f0-9-]+$, so "not!valid!" should be rejected
+        response = client.get("/api/scoring/results/not!valid!")
         assert response.status_code == 422
 
 
