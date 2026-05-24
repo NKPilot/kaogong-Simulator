@@ -8,7 +8,7 @@ import { synthesizeSpeech } from '../../api/ttsApi';
 import { uploadRecording } from '../../api/recordingApi';
 import { useScoringStore } from '../../store/scoringStore';
 import RedBanner from '../ExamRoom/components/RedBanner';
-import ExaminerRow from '../ExamRoom/components/ExaminerRow';
+
 import TimerRing from './components/TimerRing';
 import RecordingIndicator from './components/RecordingIndicator';
 import ReReadButton from './components/ReReadButton';
@@ -435,9 +435,13 @@ export default function QuestionInterviewPage() {
           <ProgressIndicator current={store.currentIndex} total={totalQuestions} />
         )}
 
-        {/* Scaled examiner row (per UI-SPEC C-02: ~80% of Phase 2 size) */}
-        <div style={{ transform: 'scale(0.8)', transformOrigin: 'top center' }}>
-          <ExaminerRow />
+        {/* First-person perspective exam room scene (scaled down) */}
+        <div style={{ marginTop: 8, borderRadius: 8, overflow: 'hidden', maxWidth: 960, margin: '0 auto' }}>
+          <img
+            src="/examiners/exam-room-jiangsu.png"
+            alt="第一视角考场场景"
+            style={{ width: '100%', height: 'auto', display: 'block', opacity: 0.6 }}
+          />
         </div>
 
         {/* Spacer: xl = 32px */}
