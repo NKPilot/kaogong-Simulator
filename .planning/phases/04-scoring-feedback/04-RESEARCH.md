@@ -645,27 +645,27 @@ export async function rescoreQuestion(
 | A5 | Polling every 2.5 seconds is adequate. WebSocket or SSE not needed for v1. | Architecture Patterns | if scoring takes >30 seconds per question, polling feels sluggish. Would need to add progress indications. Low risk -- DashScope API latency is typically <10 seconds. |
 | A6 | The existing `asr_service.transcribe_audio()` function works with ffmpeg-converted WAV files. The ASR endpoint already validates WAV format and handles this. | Common Pitfalls | if the converted WAV has unexpected format differences, ASR would fail. Low risk -- the E2E test already validates this exact flow (TTS -> WAV -> ASR). |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Frontend test infrastructure**
    - What we know: Playwright is in package.json (`@playwright/test: ^1.60.0`). No test config files found yet.
    - What's unclear: Whether Playwright is configured (playwright.config.ts) or just installed as a dependency.
-   - Recommendation: Check for playwright.config.ts during Wave 0 planning. If absent, E2E tests are manual verification only.
+   - RESOLVED: Check for playwright.config.ts during Wave 0 planning. If absent, E2E tests are manual verification only.
 
 2. **LLM prompt calibration**
    - What we know: The LLM-as-judge pattern with cover/partial/miss rubric is well-established. Qwen-max supports JSON output.
    - What's unclear: Optimal prompt phrasing for civil-service exam terminology and ASR error tolerance. May need iteration.
-   - Recommendation: Plan for prompt tuning as a development task. Use the 16 questions as a validation set.
+   - RESOLVED: Plan for prompt tuning as a development task. Use the 16 questions as a validation set.
 
 3. **Scoring trigger mechanism**
    - What we know: D-04 says scoring triggers on recording upload. Phase 3 already has `POST /api/recording/upload`.
    - What's unclear: Whether to add a new endpoint or integrate scoring into the existing upload handler.
-   - Recommendation: Add a separate `POST /api/scoring/evaluate` endpoint (clean separation). The frontend calls it after successful upload in QuestionInterviewPage.
+   - RESOLVED: Add a separate `POST /api/scoring/evaluate` endpoint (clean separation). The frontend calls it after successful upload in QuestionInterviewPage.
 
 4. **ASR transcript quality for scoring**
    - What we know: E2E test shows 100% character coverage for TTS-generated clean speech. Real user speech will have more variation.
    - What's unclear: Actual ASR accuracy on real user speech with varying accents, background noise, and civil-service terminology.
-   - Recommendation: Accept D-03's design -- LLM semantic matching mitigates ASR errors. No additional preprocessing needed beyond what Paraformer provides.
+   - RESOLVED: Accept D-03's design -- LLM semantic matching mitigates ASR errors. No additional preprocessing needed beyond what Paraformer provides.
 
 ## Sources
 
