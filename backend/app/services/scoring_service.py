@@ -46,62 +46,46 @@ RECORDINGS_DIR = "recordings"
 # Path to static ffmpeg binary
 FFMPEG_BIN = "/tmp/ffmpeg"
 
-SCORING_SYSTEM_PROMPT = """You are an expert evaluator for civil service exam interview answers.
-Your task: compare the candidate's spoken answer against the scoring criteria provided below.
-The answer is an ASR (Automatic Speech Recognition) transcript of the candidate's spoken response.
-Output valid JSON only — no markdown, no explanation, no code fences.
+SCORING_SYSTEM_PROMPT = """You are an expert evaluator for civil service exam interview answers. You must think step by step through EACH aspect of the answer before reaching any conclusion.
+
+EVALUATION PROCESS — follow these reasoning steps IN ORDER, documenting your analysis in the "reasoning" field:
+
+Step 1 — 语言表达与逻辑结构: Analyze fluency, clarity, tone, pacing. Analyze logical organization, argument flow, structural coherence. Note specific strengths and weaknesses with examples from the transcript.
+
+Step 2 — 紧扣题意与政务思维: Analyze how well the answer addresses the specific question asked. Analyze governmental perspective — does the candidate think like a public administrator? Note policy awareness, administrative terminology, public service mindset.
+
+Step 3 — 分析深度与对策可行性: Analyze depth of insight, use of concrete examples, sophistication of arguments. Analyze practicality and specificity of proposed solutions. Note what's missing.
+
+Step 4 — 采分点逐一比对: For EACH scoring point, compare against the transcript. Quote specific evidence. Explain WHY each verdict (COVER/PARTIAL/MISS) is assigned. For PARTIAL/MISS points, think about what the candidate could have said.
+
+Step 5 — 综合判断: Based on steps 1-4, determine the dimension scores, overall score, identify 2-4 specific strengths, identify 3-5 weaknesses with concrete improvement examples.
 
 IMPORTANT RULES:
-1. Do NOT penalize ASR transcription errors (homophones, similar sounds, phonetic artifacts). Evaluate the SEMANTIC MEANING, not exact wording.
-2. If the answer implies a point through context but doesn't state it explicitly, judge PARTIAL.
-3. For each scoring point, you MUST provide:
-   - COVER: the semantic meaning fully matches the scoring point
-   - PARTIAL: partially addresses the point, some key elements are missing
-   - MISS: the point is not addressed or is semantically unrelated
-4. Provide specific evidence from the transcript that supports your verdict. Quote the relevant portion.
-5. Provide clear reasoning explaining WHY the verdict was assigned.
-6. Be fair and consistent. The candidate is speaking extemporaneously under time pressure.
-7. For PARTIAL and MISS points, provide a "suggestion" field with 1-2 sentences in Chinese showing what the candidate COULD have said to cover this point well. For COVER points, leave suggestion empty.
-8. Provide an "overallScore" (0-100 integer) reflecting holistic answer quality: 90+ excellent, 80-89 good, 70-79 fair, 60-69 weak, <60 poor.
-9. Provide "strengths" — 2-4 specific strengths, each with "title" (short label) and "description" (2-3 sentences explaining what the candidate did well and why it is effective).
-10. Provide "weaknesses" — 3-5 detailed weaknesses, each with "title" (short label), "description" (IN-DEPTH analysis: 3-5 sentences covering what specific problem exists, why it matters for scoring, and exactly how to improve), and "example" (concrete model phrasing: 2-4 sentences showing what a BETTER answer would sound like, with specific terminology, policy references, or case examples). Be thorough like a professional coach — each weakness must teach the candidate something actionable.
-11. Evaluate the answer on 6 dimensions, each scored 0-10 (10=perfect, 0=absent):
-    - 语言表达 (Language Expression): fluency, clarity, appropriate tone and pacing for oral interview
-    - 逻辑结构 (Logical Structure): clear organization, coherent argument flow, well-structured reasoning
-    - 紧扣题意 (Topic Relevance): how accurately and fully the candidate addresses the specific question asked
-    - 政务思维 (Governmental Thinking): demonstrates administrative perspective, policy awareness, public service mindset
-    - 分析深度 (Analytical Depth): depth of insight, use of concrete examples, sophistication of arguments
-    - 对策可行 (Practical Solutions): feasibility and specificity of proposed solutions or suggestions
-    Score each dimension independently. Be strict — a score of 8+ means near-perfect; 5-7 is average; <5 is weak.
+- The answer is an ASR transcript. Do NOT penalize homophone errors (同音错别字). Judge SEMANTIC MEANING.
+- For each scoring point: COVER (fully addressed), PARTIAL (partially addressed), MISS (not addressed).
+- For PARTIAL/MISS points, provide a "suggestion" showing what could have been said.
+- For each weakness provide an "example" — concrete model phrasing the candidate could have used.
+- overallScore: 0-100. Dimension scores: 0-10 each (8+ near-perfect, 5-7 average, <5 weak).
+- Be fair — the candidate is speaking extemporaneously under time pressure.
+- The "reasoning" field MUST contain your complete step-by-step analysis in Chinese (at least 500 characters). This is the most important field — it shows your work.
 
-Output format (strict JSON):
+Six dimensions to score:
+- 语言表达: fluency, clarity, tone
+- 逻辑结构: organization, coherence
+- 紧扣题意: relevance to the question
+- 政务思维: governmental/policy perspective
+- 分析深度: depth of insight and examples
+- 对策可行: practicality of solutions
+
+Output valid JSON only — no markdown outside the reasoning field:
 {
-  "coverage": [
-    {
-      "id": 1,
-      "verdict": "COVER",
-      "evidence": "...",
-      "reasoning": "...",
-      "suggestion": ""
-    }
-  ],
+  "reasoning": "## 第一步：语言表达与逻辑结构\n[detailed analysis in Chinese]\n\n## 第二步：紧扣题意与政务思维\n[detailed analysis in Chinese]\n\n## 第三步：分析深度与对策可行性\n[detailed analysis in Chinese]\n\n## 第四步：采分点逐一比对\nPoint 1: ...\nPoint 2: ...\n...\n\n## 第五步：综合判断\n[overall assessment and score rationale in Chinese]",
+  "coverage": [{"id": 1, "verdict": "COVER", "evidence": "...", "reasoning": "...", "suggestion": ""}],
   "overallScore": 75,
-  "dimensions": [
-    {"name": "语言表达", "score": 7, "comment": "表达流畅，但语速略快，部分语句不够精炼"},
-    {"name": "逻辑结构", "score": 8, "comment": "层次分明，从现象到原因再到对策，逻辑清晰"},
-    {"name": "紧扣题意", "score": 6, "comment": "基本回应了题目要求，但部分要点展开不够"},
-    {"name": "政务思维", "score": 5, "comment": "有一定的政策意识，但未能从政府角度深入分析"},
-    {"name": "分析深度", "score": 7, "comment": "分析有一定深度，举了具体例子支撑观点"},
-    {"name": "对策可行", "score": 6, "comment": "对策方向正确，但缺乏具体可操作的细节"}
-  ],
-  "strengths": [
-    {"title": "逻辑清晰", "description": "回答结构层次分明，从现象分析到原因探讨再到对策建议，逻辑链条完整"}
-  ],
-  "weaknesses": [
-    {"title": "政务视角不足", "description": "回答从社会学角度分析了适老化问题，但未能站在政府立场思考。公务员面试要求体现政务思维，即从政策制定者、公共管理者的角度分析问题。建议在分析原因时加入政府视角，如'从政府治理角度看，适老化改造的滞后反映了公共服务精细化程度不足'。", "example": "比如可以这样说：'适老化改造不仅是民生工程，更是治理能力的体现。政府应建立老年人需求动态评估机制，将适老化指标纳入城市体检体系，从规划、建设、管理全链条保障老年群体的出行权益。'"},
-    {"title": "缺乏具体案例和数据支撑", "description": "回答整体偏宏观论述，没有引用具体的政策案例或数据。在公务员面试中，用真实案例和数据说话比空谈道理更有说服力。建议在分析适老化问题时，引用具体的政策文件（如《无障碍环境建设法》）、城市案例（如上海适老化改造三年行动）或权威数据（如全国老旧小区改造数量）。", "example": "比如可以这样论述：'2023年9月施行的《无障碍环境建设法》明确要求新建改建项目配套无障碍设施。以上海为例，2024年完成老旧小区适老化改造328个，加装电梯超过3000台，这些实践表明适老化改造需要法治保障与地方创新双轮驱动。'"}
-  ],
-  "feedback": "overall textual feedback in Chinese assessing strengths and areas for improvement"
+  "dimensions": [{"name": "语言表达", "score": 7, "comment": "..."}],
+  "strengths": [{"title": "逻辑清晰", "description": "..."}],
+  "weaknesses": [{"title": "政务视角不足", "description": "...", "example": "可以这样说：..."}],
+  "feedback": "overall assessment in Chinese"
 }"""
 
 MODEL_ANSWER_SYSTEM_PROMPT = """You are an expert civil service exam interview coach. Your task is to generate a model answer (参考答案) for an interview question based on the provided scoring criteria.
@@ -251,7 +235,7 @@ IMPORTANT: Ignore ASR homophone errors (同音错别字). Judge by semantic mean
 For PARTIAL and MISS points, provide a "suggestion" — 1-2 sentences showing what the candidate could have said to cover this point. For COVER points, leave suggestion empty.
 Also provide "overallScore" (integer 0-100), "dimensions" (6-dimension evaluation array), "strengths" and "weaknesses" (each an array with "title" and "description").
 
-Output ONLY a valid JSON object (no markdown formatting, no code fences):
+Output ONLY a valid JSON object with "reasoning" field containing your step-by-step analysis:
 {{
   "coverage": [
     {{"id": 1, "verdict": "COVER", "evidence": "...", "reasoning": "...", "suggestion": ""}},
@@ -341,6 +325,8 @@ def validate_scoring_result(result: dict) -> None:
     for w in result.get("weaknesses", []):
         if isinstance(w, dict) and "example" not in w:
             w["example"] = ""
+    if "reasoning" not in result:
+        result["reasoning"] = ""
     if "dimensions" not in result:
         result["dimensions"] = []
     # Validate dimensions if present
@@ -479,6 +465,7 @@ def evaluate_answer(
             "feedback": llm_result.get("feedback", ""),
             "coveredCount": summary["coveredCount"],
             "totalCount": summary["totalCount"],
+            "reasoning": llm_result.get("reasoning", ""),
             "overallScore": llm_result.get("overallScore", 0),
             "dimensions": llm_result.get("dimensions", []),
             "strengths": llm_result.get("strengths", []),

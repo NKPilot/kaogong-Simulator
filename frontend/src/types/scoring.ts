@@ -88,6 +88,8 @@ export interface ScoringResult {
   totalCount?: number;
   /** Error message (populated when status is 'failed') */
   error?: string;
+  /** Step-by-step reasoning trace from LLM (populated when status is 'scored') */
+  reasoning?: string;
   /** Overall holistic score 0-100 (populated when status is 'scored') */
   overallScore?: number;
   /** Strengths identified in the answer (populated when status is 'scored') */

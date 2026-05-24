@@ -420,6 +420,28 @@ export default function HistoryPage() {
                             ))}
                           </div>
                         )}
+                        {(r as any).reasoning && (
+                          <Collapse
+                            size="small"
+                            ghost
+                            style={{ marginTop: 6 }}
+                            items={[{
+                              key: `reasoning-${r.question_index}`,
+                              label: (
+                                <Text style={{ fontSize: 11, color: '#8C8C8C' }}>AI 推理过程</Text>
+                              ),
+                              children: (
+                                <div style={{
+                                  fontSize: 12, lineHeight: 1.7, color: '#595959',
+                                  background: '#FAFAFA', padding: 8, borderRadius: 4,
+                                  whiteSpace: 'pre-wrap', maxHeight: 300, overflow: 'auto',
+                                }}>
+                                  {(r as any).reasoning}
+                                </div>
+                              ),
+                            }]}
+                          />
+                        )}
                         {r.coverage && r.coverage.length > 0 && (
                           <CoverageDots coverage={r.coverage} />
                         )}

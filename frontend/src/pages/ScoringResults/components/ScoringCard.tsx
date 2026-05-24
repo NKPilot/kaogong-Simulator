@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card, Typography, Collapse, Button, Tabs, Spin, Progress } from 'antd';
 import {
   TrophyOutlined, StarOutlined, BookOutlined, BulbOutlined,
-  WarningOutlined, RiseOutlined, AimOutlined,
+  WarningOutlined, RiseOutlined, AimOutlined, ThunderboltOutlined,
 } from '@ant-design/icons';
 import type { ScoringResult, ModelAnswerResult } from '../../../types/scoring';
 import { fetchModelAnswer } from '../../../api/scoringApi';
@@ -159,6 +159,34 @@ export default function ScoringCard({
       ),
       children: (
         <div>
+          {/* Reasoning Trace */}
+          {result.reasoning && (
+            <Collapse
+              size="small"
+              ghost
+              style={{ marginBottom: 16 }}
+              items={[{
+                key: 'reasoning',
+                label: (
+                  <Text style={{ fontSize: 13, color: '#8C8C8C' }}>
+                    <ThunderboltOutlined style={{ marginRight: 4, color: '#722ED1' }} />
+                    AI 推理过程
+                  </Text>
+                ),
+                children: (
+                  <div style={{
+                    fontSize: 13, lineHeight: 1.8, color: '#595959',
+                    background: '#FAFAFA', padding: 12, borderRadius: 6,
+                    whiteSpace: 'pre-wrap', maxHeight: 400, overflow: 'auto',
+                    border: '1px solid #F0F0F0',
+                  }}>
+                    {result.reasoning}
+                  </div>
+                ),
+              }]}
+            />
+          )}
+
           {/* Overall Score + Grade */}
           <div style={{ textAlign: 'center', marginBottom: 16 }}>
             <Progress
