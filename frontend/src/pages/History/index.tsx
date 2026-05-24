@@ -126,7 +126,7 @@ export default function HistoryPage() {
     for (const qid of session.question_ids) {
       if (qid) store.toggleSelect(qid);
     }
-    navigate('/');
+    navigate('/exam-room');
   }
 
   if (loading) {
