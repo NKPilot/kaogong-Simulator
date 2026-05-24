@@ -87,6 +87,7 @@ None yet.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260524-lar | 生成第一题漫画题的语音答案并保存到历史记录，然后进行打分测试 | 2026-05-24 | c9e24b4 | [260524-lar-tts-answer-scoring-test](./quick/260524-lar-tts-answer-scoring-test/) |
+| 260524-scoring-ux-enhance | 增强评分展示：结构化反馈、参考答案生成、评分UI改善 | 2026-05-24 | — | [260524-scoring-ux-enhance](./quick/260524-scoring-ux-enhance/) |
 
 ## Deferred Items
 

@@ -40,6 +40,16 @@ export interface CoveragePoint {
   evidence: string;
   /** LLM reasoning for the verdict (in Chinese) */
   reasoning: string;
+  /** For PARTIAL/MISS: example of what candidate could have said (in Chinese) */
+  suggestion?: string;
+}
+
+/** A specific strength found in the candidate's answer */
+export interface Strength {
+  /** Short label for the strength (e.g., "逻辑清晰") */
+  title: string;
+  /** Description of the strength (1-2 sentences in Chinese) */
+  description: string;
 }
 
 /**
@@ -66,6 +76,17 @@ export interface ScoringResult {
   totalCount?: number;
   /** Error message (populated when status is 'failed') */
   error?: string;
+  /** Overall holistic score 0-100 (populated when status is 'scored') */
+  overallScore?: number;
+  /** Strengths identified in the answer (populated when status is 'scored') */
+  strengths?: Strength[];
+}
+
+/** Model answer response from the API */
+export interface ModelAnswerResult {
+  question_id: string;
+  modelAnswer: string;
+  cached: boolean;
 }
 
 /**

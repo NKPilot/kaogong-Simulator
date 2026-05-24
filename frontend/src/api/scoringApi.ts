@@ -1,5 +1,5 @@
 import { API_BASE_URL } from './client';
-import type { ScoringResult } from '../types/scoring';
+import type { ScoringResult, ModelAnswerResult } from '../types/scoring';
 
 /**
  * Trigger the async scoring pipeline for a single question.
@@ -96,4 +96,30 @@ export async function rescoreQuestion(
     console.error(errorMsg);
     throw new Error(errorMsg);
   }
+}
+
+/**
+ * Fetch or generate a model answer for a question.
+ *
+ * GET /api/scoring/model-answer/{questionId}
+ * Returns a model/standard answer covering all score points.
+ * Results are cached server-side after first generation.
+ *
+ * @param questionId - Question identifier from questions.json
+ * @returns Model answer result with text and cache status
+ */
+export async function fetchModelAnswer(
+  questionId: string
+): Promise<ModelAnswerResult> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/scoring/model-answer/${encodeURIComponent(questionId)}`
+  );
+
+  if (!response.ok) {
+    const errorMsg = `Failed to fetch model answer: ${response.status}`;
+    console.error(errorMsg);
+    throw new Error(errorMsg);
+  }
+
+  return response.json();
 }

@@ -9,6 +9,8 @@ import {
   DeleteOutlined, RedoOutlined,
 } from '@ant-design/icons';
 import { useQuestionBankStore } from '../../store/questionBankStore';
+import CoverageDots from '../ScoringResults/components/CoverageDots';
+import type { CoveragePoint } from '../../types/scoring';
 
 const { Title, Text } = Typography;
 const API_BASE = 'http://localhost:8000';
@@ -30,6 +32,7 @@ interface SessionItem {
     feedback?: string;
     coveredCount?: number;
     totalCount?: number;
+    coverage?: CoveragePoint[];
     error?: string;
   }>;
   recordings: string[];
@@ -271,15 +274,37 @@ export default function HistoryPage() {
                   <Collapse size="small" ghost items={[{
                     key: 'scores',
                     label: <Text type="secondary">查看评分详情</Text>,
-                    children: session.results.map((r) => (
+                    children: session.results.map((r) => {
+                      const rOverallScore = (r as any).overallScore ?? 0;
+                      const hasRichData = r.status === 'scored';
+                      return (
                       <div key={r.question_index} style={{ padding: '8px 0', borderBottom: '1px solid #f0f0f0' }}>
-                        <Text strong>{r.question_index + 1}. {titleMap[r.question_id] || `第${r.question_index + 1}题`}</Text>
-                        {r.status === 'scored' ? (
-                          <Tag color="green" style={{ marginLeft: 8 }}>{r.coveredCount}/{r.totalCount} 覆盖</Tag>
-                        ) : r.status === 'failed' ? (
-                          <Tag color="red" style={{ marginLeft: 8 }}>评分失败</Tag>
-                        ) : (
-                          <Tag style={{ marginLeft: 8 }}>评分中</Tag>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Text strong>{r.question_index + 1}. {titleMap[r.question_id] || `第${r.question_index + 1}题`}</Text>
+                          <Space>
+                            {hasRichData ? (
+                              <>
+                                {rOverallScore > 0 && (
+                                  <Tag color="blue">{rOverallScore}分</Tag>
+                                )}
+                                <Tag color="green">{r.coveredCount}/{r.totalCount} 覆盖</Tag>
+                              </>
+                            ) : r.status === 'failed' ? (
+                              <Tag color="red">评分失败</Tag>
+                            ) : (
+                              <Tag>评分中</Tag>
+                            )}
+                          </Space>
+                        </div>
+                        {(r as any).strengths && (r as any).strengths.length > 0 && (
+                          <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                            {(r as any).strengths.map((s: any, si: number) => (
+                              <Tag key={si} color="green" style={{ fontSize: 11 }}>{s.title}</Tag>
+                            ))}
+                          </div>
+                        )}
+                        {r.coverage && r.coverage.length > 0 && (
+                          <CoverageDots coverage={r.coverage} />
                         )}
                         {r.feedback && (
                           <Text type="secondary" style={{ display: 'block', fontSize: 13, marginTop: 4 }}>
@@ -287,8 +312,8 @@ export default function HistoryPage() {
                           </Text>
                         )}
                       </div>
-                    )),
-                  }]} />
+                    )});
+                  })}]} />
                 )}
               </Card>
             );

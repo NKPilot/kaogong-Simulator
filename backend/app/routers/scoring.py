@@ -16,6 +16,8 @@ from app.services.scoring_service import (
     evaluate_answer,
     load_scoring_results,
     save_scoring_result,
+    generate_model_answer,
+    parse_score_points,
 )
 
 logger = logging.getLogger("interview-simulator")
@@ -163,6 +165,37 @@ async def get_results(session_id: str) -> list[dict]:
         session_id, len(results),
     )
     return results
+
+# In-memory cache for model answers: key=question_id, value=answer_text
+_model_answer_cache: dict[str, str] = {}
+
+
+@router.get("/api/scoring/model-answer/{question_id}")
+async def get_model_answer(question_id: str) -> dict:
+    """Generate or retrieve cached model answer for a question.
+
+    Returns a model/standard answer that covers all score points for the
+    given question. Results are cached in memory for reuse.
+    """
+    # Check cache first
+    cached = _model_answer_cache.get(question_id)
+    if cached:
+        return {"question_id": question_id, "modelAnswer": cached, "cached": True}
+
+    # Load question and generate
+    question = _validate_and_load_question(question_id)
+    score_points_text = question.get("scorePoints", "")
+    points = parse_score_points(score_points_text)
+    if not points:
+        points = [{"id": 1, "section": "", "text": score_points_text.strip()}]
+
+    answer = await asyncio.to_thread(
+        generate_model_answer, question["fullText"], points
+    )
+    if answer:
+        _model_answer_cache[question_id] = answer
+
+    return {"question_id": question_id, "modelAnswer": answer, "cached": False}
 
 
 @router.post("/api/scoring/rescore")
