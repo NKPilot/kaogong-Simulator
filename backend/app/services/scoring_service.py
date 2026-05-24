@@ -63,8 +63,8 @@ IMPORTANT RULES:
 6. Be fair and consistent. The candidate is speaking extemporaneously under time pressure.
 7. For PARTIAL and MISS points, provide a "suggestion" field with 1-2 sentences in Chinese showing what the candidate COULD have said to cover this point well. For COVER points, leave suggestion empty.
 8. Provide an "overallScore" (0-100 integer) reflecting holistic answer quality: 90+ excellent, 80-89 good, 70-79 fair, 60-69 weak, <60 poor.
-9. Provide "strengths" — 2-4 specific strengths found, each with a "title" (short label) and "description" (1-2 sentences).
-10. Provide "weaknesses" — 2-4 specific weaknesses or areas to improve, each with a "title" (short label) and "description" (1-2 sentences). Must include actionable improvement advice.
+9. Provide "strengths" — 2-4 specific strengths, each with "title" (short label) and "description" (2-3 sentences explaining what the candidate did well and why it is effective).
+10. Provide "weaknesses" — 3-5 detailed weaknesses, each with "title" (short label), "description" (IN-DEPTH analysis: 3-5 sentences covering what specific problem exists, why it matters for scoring, and exactly how to improve), and "example" (concrete model phrasing: 2-4 sentences showing what a BETTER answer would sound like, with specific terminology, policy references, or case examples). Be thorough like a professional coach — each weakness must teach the candidate something actionable.
 11. Evaluate the answer on 6 dimensions, each scored 0-10 (10=perfect, 0=absent):
     - 语言表达 (Language Expression): fluency, clarity, appropriate tone and pacing for oral interview
     - 逻辑结构 (Logical Structure): clear organization, coherent argument flow, well-structured reasoning
@@ -98,8 +98,8 @@ Output format (strict JSON):
     {"title": "逻辑清晰", "description": "回答结构层次分明，从现象分析到原因探讨再到对策建议，逻辑链条完整"}
   ],
   "weaknesses": [
-    {"title": "政务视角不足", "description": "未能从政府管理的角度分析问题，建议多使用'政府应...'、'政策层面...'等表述"},
-    {"title": "对策不够具体", "description": "提出的解决措施偏宏观，应增加可操作的具体方案，如引用实际政策或案例"}
+    {"title": "政务视角不足", "description": "回答从社会学角度分析了适老化问题，但未能站在政府立场思考。公务员面试要求体现政务思维，即从政策制定者、公共管理者的角度分析问题。建议在分析原因时加入政府视角，如'从政府治理角度看，适老化改造的滞后反映了公共服务精细化程度不足'。", "example": "比如可以这样说：'适老化改造不仅是民生工程，更是治理能力的体现。政府应建立老年人需求动态评估机制，将适老化指标纳入城市体检体系，从规划、建设、管理全链条保障老年群体的出行权益。'"},
+    {"title": "缺乏具体案例和数据支撑", "description": "回答整体偏宏观论述，没有引用具体的政策案例或数据。在公务员面试中，用真实案例和数据说话比空谈道理更有说服力。建议在分析适老化问题时，引用具体的政策文件（如《无障碍环境建设法》）、城市案例（如上海适老化改造三年行动）或权威数据（如全国老旧小区改造数量）。", "example": "比如可以这样论述：'2023年9月施行的《无障碍环境建设法》明确要求新建改建项目配套无障碍设施。以上海为例，2024年完成老旧小区适老化改造328个，加装电梯超过3000台，这些实践表明适老化改造需要法治保障与地方创新双轮驱动。'"}
   ],
   "feedback": "overall textual feedback in Chinese assessing strengths and areas for improvement"
 }"""
@@ -266,7 +266,8 @@ Output ONLY a valid JSON object (no markdown formatting, no code fences):
     {{"title": "逻辑清晰", "description": "回答结构层次分明..."}}
   ],
   "weaknesses": [
-    {{"title": "政务视角不足", "description": "未能从政府管理角度分析..."}}
+    {{"title": "政务视角不足", "description": "详细分析...", "example": "可以这样说..."}},
+    ...
   ],
   "feedback": "overall assessment in Chinese, 2-4 sentences covering strengths and areas for improvement"
 }}"""
@@ -336,6 +337,10 @@ def validate_scoring_result(result: dict) -> None:
         result["strengths"] = []
     if "weaknesses" not in result:
         result["weaknesses"] = []
+    # Normalize weakness fields
+    for w in result.get("weaknesses", []):
+        if isinstance(w, dict) and "example" not in w:
+            w["example"] = ""
     if "dimensions" not in result:
         result["dimensions"] = []
     # Validate dimensions if present

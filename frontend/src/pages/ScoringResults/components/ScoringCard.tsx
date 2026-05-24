@@ -278,7 +278,20 @@ export default function ScoringCard({
                     >
                       <Text strong style={{ fontSize: 13, color: '#D46B08' }}>{w.title}</Text>
                       <br />
-                      <Text style={{ fontSize: 13, color: '#262626' }}>{w.description}</Text>
+                      <Text style={{ fontSize: 13, color: '#262626', lineHeight: 1.6 }}>{w.description}</Text>
+                      {w.example && (
+                        <div style={{
+                          background: '#FFF', border: '1px solid #FFD591',
+                          borderRadius: 4, padding: '6px 10px', marginTop: 8,
+                        }}>
+                          <Text type="secondary" style={{ fontSize: 11, display: 'block', marginBottom: 2 }}>
+                            示范:
+                          </Text>
+                          <Text style={{ fontSize: 13, color: '#595959', lineHeight: 1.6, fontStyle: 'italic' }}>
+                            {w.example}
+                          </Text>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

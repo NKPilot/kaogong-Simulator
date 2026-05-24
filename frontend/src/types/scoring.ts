@@ -44,12 +44,14 @@ export interface CoveragePoint {
   suggestion?: string;
 }
 
-/** A specific strength found in the candidate's answer */
+/** A specific strength or weakness found in the candidate's answer */
 export interface Strength {
-  /** Short label for the strength (e.g., "逻辑清晰") */
+  /** Short label (e.g., "逻辑清晰", "政务视角不足") */
   title: string;
-  /** Description of the strength (1-2 sentences in Chinese) */
+  /** Detailed description (2-5 sentences in Chinese) */
   description: string;
+  /** For weaknesses: concrete model phrasing example (2-4 sentences showing a better answer) */
+  example?: string;
 }
 
 /** A multi-dimensional scoring dimension */

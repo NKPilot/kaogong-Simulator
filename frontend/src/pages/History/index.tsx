@@ -385,9 +385,38 @@ export default function HistoryPage() {
                           </Space>
                         </div>
                         {(r as any).strengths && (r as any).strengths.length > 0 && (
-                          <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                          <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 4 }}>
                             {(r as any).strengths.map((s: any, si: number) => (
-                              <Tag key={si} color="green" style={{ fontSize: 11 }}>{s.title}</Tag>
+                              <div key={si} style={{ fontSize: 12, color: '#389E0D' }}>
+                                <Text strong style={{ fontSize: 12, color: '#389E0D' }}>+ {s.title}</Text>
+                                <Text type="secondary" style={{ fontSize: 12, display: 'block' }}>{s.description}</Text>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {(r as any).weaknesses && (r as any).weaknesses.length > 0 && (
+                          <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                            {(r as any).weaknesses.map((w: any, wi: number) => (
+                              <div key={wi} style={{
+                                background: '#FFF7E6', borderRadius: 6, padding: '6px 10px',
+                                border: '1px solid #FFE7BA',
+                              }}>
+                                <Text strong style={{ fontSize: 12, color: '#D46B08' }}>- {w.title}</Text>
+                                <Text type="secondary" style={{ fontSize: 12, display: 'block', marginTop: 2 }}>
+                                  {w.description}
+                                </Text>
+                                {w.example && (
+                                  <div style={{
+                                    background: '#FFF', borderRadius: 4, padding: '4px 8px', marginTop: 6,
+                                    border: '1px solid #FFE7BA',
+                                  }}>
+                                    <Text type="secondary" style={{ fontSize: 10 }}>示范: </Text>
+                                    <Text style={{ fontSize: 12, color: '#8C8C8C', fontStyle: 'italic' }}>
+                                      {w.example}
+                                    </Text>
+                                  </div>
+                                )}
+                              </div>
                             ))}
                           </div>
                         )}
