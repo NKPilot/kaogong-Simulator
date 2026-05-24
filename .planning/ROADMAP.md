@@ -91,11 +91,11 @@ Plans:
 
 Plans:
 **Wave 1**
-- [x] 04-01-PLAN.md — Backend scoring pipeline (scoring_service + router + main.py integration)
-- [x] 04-02-PLAN.md — Frontend data layer (scoring types, API module, Zustand store)
+- [ ] 04-01-PLAN.md — Backend scoring pipeline (scoring_service + router + main.py integration)
+- [ ] 04-02-PLAN.md — Frontend data layer (scoring types, API module, Zustand store)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [x] 04-03-PLAN.md — Scoring UI components (ScoringCard, CoverageDots, PendingCard, ErrorCard)
+- [ ] 04-03-PLAN.md — Scoring UI components (ScoringCard, CoverageDots, PendingCard, ErrorCard)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 04-04-PLAN.md — Results page orchestrator, /results route, scoring trigger integration + human verification
