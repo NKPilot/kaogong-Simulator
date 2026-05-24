@@ -42,7 +42,7 @@ function formatDate(iso: string) {
 
 export default function HistoryPage() {
   const navigate = useNavigate();
-  const { loadQuestions } = useQuestionBankStore();
+  const { questions, loadQuestions } = useQuestionBankStore();
   const [sessions, setSessions] = useState<SessionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -171,19 +171,34 @@ export default function HistoryPage() {
           renderItem={(session) => {
             const avgScore = session.total_points > 0
               ? Math.round((session.total_covered / session.total_points) * 100) : 0;
+            // Build question title map from store
+            const titleMap: Record<string, string> = {};
+            for (const q of questions) { titleMap[q.id] = q.title; }
+            const questionTitles = session.question_ids
+              .map((id) => titleMap[id] || id)
+              .filter(Boolean);
             return (
               <Card
                 size="small"
                 style={{ marginBottom: 12, opacity: selected.has(session.session_id) ? 0.6 : 1 }}
                 title={
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Space>
-                      <Checkbox
-                        checked={selected.has(session.session_id)}
-                        onChange={() => toggleSelect(session.session_id)}
-                      />
-                      <Text strong>{formatDate(session.created_at)}</Text>
-                    </Space>
+                    <div>
+                      <Space>
+                        <Checkbox
+                          checked={selected.has(session.session_id)}
+                          onChange={() => toggleSelect(session.session_id)}
+                        />
+                        <Text strong>{formatDate(session.created_at)}</Text>
+                      </Space>
+                      {questionTitles.length > 0 && (
+                        <div style={{ marginTop: 4, marginLeft: 28 }}>
+                          {questionTitles.map((t, i) => (
+                            <Tag key={i} style={{ marginBottom: 2, fontSize: 12 }}>{t}</Tag>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                     <Space>
                       <Tag color={session.scored_count === session.question_count ? 'green' : 'orange'}>
                         {session.scored_count}/{session.question_count} 已评分
@@ -240,9 +255,11 @@ export default function HistoryPage() {
                   <Collapse size="small" ghost items={[{
                     key: 'scores',
                     label: <Text type="secondary">查看评分详情</Text>,
-                    children: session.results.map((r) => (
+                    children: session.results.map((r) => {
+                      const qTitle = titleMap[r.question_id] || `第${r.question_index + 1}题`;
+                      return (
                       <div key={r.question_index} style={{ padding: '8px 0', borderBottom: '1px solid #f0f0f0' }}>
-                        <Text strong>第{r.question_index + 1}题</Text>
+                        <Text strong>{r.question_index + 1}. {qTitle}</Text>
                         {r.status === 'scored' ? (
                           <Tag color="green" style={{ marginLeft: 8 }}>{r.coveredCount}/{r.totalCount} 覆盖</Tag>
                         ) : r.status === 'failed' ? (
