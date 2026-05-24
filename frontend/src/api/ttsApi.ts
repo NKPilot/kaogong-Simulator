@@ -30,7 +30,7 @@ interface TtsParams {
 }
 
 function getTtsParams(): TtsParams {
-  const defaults: TtsParams = { speed: 1.0, pitch: 0, vol: 50, voice: 'longxiaocheng_v2' };
+  const defaults: TtsParams = { speed: 1.0, pitch: 0, vol: 80, voice: 'longxiaocheng_v2' };
   try {
     const stored = (window as any).__TTS_PARAMS__;
     if (stored) return { ...defaults, ...stored };
