@@ -312,8 +312,7 @@ export default function HistoryPage() {
                           </Text>
                         )}
                       </div>
-                    )});
-                  })}]} />
+                    )})]} />
                 )}
               </Card>
             );
