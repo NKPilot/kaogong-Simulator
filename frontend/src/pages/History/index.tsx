@@ -138,6 +138,15 @@ export default function HistoryPage() {
 
   return (
     <div style={{ maxWidth: 960, margin: '0 auto' }}>
+      <style>{`
+        .history-checkbox .ant-checkbox-inner {
+          border-color: #BFBFBF !important;
+          border-width: 2px;
+        }
+        .history-checkbox:hover .ant-checkbox-inner {
+          border-color: #BE1E2D !important;
+        }
+      `}</style>
       <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Title level={3} style={{ margin: 0 }}><HistoryOutlined style={{ marginRight: 8 }} />历史记录</Title>
         <Space>
@@ -180,7 +189,13 @@ export default function HistoryPage() {
             return (
               <Card
                 size="small"
-                style={{ marginBottom: 12, opacity: selected.has(session.session_id) ? 0.6 : 1 }}
+                style={{
+                  marginBottom: 12,
+                  border: '1px solid #D9D9D9',
+                  borderRadius: 8,
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+                  opacity: selected.has(session.session_id) ? 0.6 : 1,
+                }}
                 title={
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
@@ -188,6 +203,7 @@ export default function HistoryPage() {
                         <Checkbox
                           checked={selected.has(session.session_id)}
                           onChange={() => toggleSelect(session.session_id)}
+                          className="history-checkbox"
                         />
                         <Text strong>{formatDate(session.created_at)}</Text>
                       </Space>
