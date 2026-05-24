@@ -1,7 +1,8 @@
 ---
 phase: 4
 slug: scoring-feedback
-status: draft
+status: approved
+reviewed_at: 2026-05-24
 shadcn_initialized: false
 preset: none
 created: 2026-05-24
