@@ -6,6 +6,7 @@ import { useInterviewStore } from '../../store/interviewStore';
 import { useQuestionBankStore } from '../../store/questionBankStore';
 import { synthesizeSpeech } from '../../api/ttsApi';
 import { uploadRecording } from '../../api/recordingApi';
+import { useScoringStore } from '../../store/scoringStore';
 import RedBanner from '../ExamRoom/components/RedBanner';
 import ExaminerRow from '../ExamRoom/components/ExaminerRow';
 import TimerRing from './components/TimerRing';
@@ -110,7 +111,19 @@ export default function QuestionInterviewPage() {
         const blob = new Blob(recordingChunksRef.current, { type: 'audio/webm' });
         recordingChunksRef.current = [];
         useInterviewStore.setState({ recordingBlob: blob });
-        uploadRecording(captureSessionId, captureIndex, blob).catch(console.error);
+
+        const questionId = selectedIds[captureIndex];
+        const question = questions.find((q) => q.id === questionId);
+        uploadRecording(captureSessionId, captureIndex, blob)
+          .then(() => {
+            // Trigger async scoring (D-04): runs ASR + LLM evaluation in background
+            // Chained after uploadRecording to guarantee recording file exists before scoring reads it
+            useScoringStore.getState().triggerScoring(
+              captureSessionId, captureIndex, questionId,
+              question?.title || `第 ${captureIndex + 1} 题`
+            ).catch(console.error);
+          })
+          .catch(console.error);
         mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
       };
 

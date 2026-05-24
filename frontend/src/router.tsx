@@ -3,6 +3,7 @@ import AppLayout from './layouts/AppLayout';
 import QuestionBankPage from './pages/QuestionBank';
 import ExamRoomPage from './pages/ExamRoom';
 import QuestionInterviewPage from './pages/QuestionInterview';
+import ScoringResultsPage from './pages/ScoringResults';
 import TestRecordingPage from './pages/TestRecording';
 
 export const router = createBrowserRouter([
@@ -13,6 +14,7 @@ export const router = createBrowserRouter([
       { index: true, element: <QuestionBankPage /> },
       { path: 'exam-room', element: <ExamRoomPage /> },
       { path: 'exam-room/question', element: <QuestionInterviewPage /> },
+      { path: 'results', element: <ScoringResultsPage /> },
       { path: 'test-recording', element: <TestRecordingPage /> },
     ],
   },
