@@ -1,8 +1,9 @@
-"""History API router — list past interview sessions."""
+"""History API router — list, delete, and manage past interview sessions."""
 
 import json
 import logging
 import os
+import shutil
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException
@@ -29,21 +30,17 @@ def _list_sessions() -> list[dict]:
         path = os.path.join(RECORDINGS_DIR, name)
         if not os.path.isdir(path):
             continue
-        # Count webm recordings
+        results = load_scoring_results(name)
         webm_files = sorted(
             [f for f in os.listdir(path) if f.endswith(".webm")]
         )
-        # Use max of webm count and result count as question_count
-        question_count = max(len(webm_files), len(results))
-        # Get scoring summary
-        results = load_scoring_results(name)
-        # Skip sessions with no recordings and no results
         if not webm_files and not results:
             continue
+        question_count = max(len(webm_files), len(results))
         scored = sum(1 for r in results if r.get("status") == "scored")
         total_covered = sum(r.get("coveredCount", 0) for r in results)
         total_points = sum(r.get("totalCount", 0) for r in results)
-        # Use oldest file mtime as session date
+        question_ids = [r.get("question_id", "") for r in results if r.get("question_id")]
         mtimes = [os.path.getmtime(os.path.join(path, f)) for f in webm_files]
         created_at = min(mtimes) if mtimes else os.path.getmtime(path)
         sessions.append({
@@ -53,12 +50,23 @@ def _list_sessions() -> list[dict]:
             "scored_count": scored,
             "total_covered": total_covered,
             "total_points": total_points,
+            "question_ids": question_ids,
             "results": results,
             "recordings": [f"q{i}.webm" for i in range(question_count)],
         })
 
     sessions.sort(key=lambda s: s["created_at"], reverse=True)
     return sessions
+
+
+def _delete_session_dir(session_id: str) -> bool:
+    """Delete a session directory. Returns True if deleted, False if not found."""
+    path = os.path.join(RECORDINGS_DIR, session_id)
+    if os.path.isdir(path):
+        shutil.rmtree(path)
+        logger.info("Deleted session: %s", session_id)
+        return True
+    return False
 
 
 @router.get("/api/history")
@@ -78,6 +86,7 @@ async def get_session(session_id: str):
     return {
         "session_id": session_id,
         "question_count": len(webm_files),
+        "question_ids": [r.get("question_id", "") for r in results if r.get("question_id")],
         "results": results,
         "recordings": webm_files,
     }
@@ -90,3 +99,24 @@ async def get_recording(session_id: str, filename: str):
     if not os.path.isfile(filepath):
         raise HTTPException(status_code=404, detail="Recording not found")
     return FileResponse(filepath, media_type="audio/webm")
+
+
+@router.delete("/api/history/{session_id}")
+async def delete_session(session_id: str):
+    """Delete a single session and all its recordings."""
+    if _delete_session_dir(session_id):
+        return {"status": "deleted", "session_id": session_id}
+    raise HTTPException(status_code=404, detail="Session not found")
+
+
+@router.delete("/api/history")
+async def batch_delete_sessions(session_ids: list[str]):
+    """Batch delete multiple sessions."""
+    deleted = []
+    not_found = []
+    for sid in session_ids:
+        if _delete_session_dir(sid):
+            deleted.append(sid)
+        else:
+            not_found.append(sid)
+    return {"deleted": deleted, "not_found": not_found}

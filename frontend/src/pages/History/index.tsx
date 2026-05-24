@@ -2,10 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Typography, List, Card, Tag, Button, Spin, Alert, Empty, Collapse,
+  Checkbox, Space, Popconfirm, message,
 } from 'antd';
 import {
   HistoryOutlined, CaretRightOutlined, SoundOutlined,
+  DeleteOutlined, RedoOutlined,
 } from '@ant-design/icons';
+import { useQuestionBankStore } from '../../store/questionBankStore';
 
 const { Title, Text } = Typography;
 const API_BASE = 'http://localhost:8000';
@@ -17,6 +20,7 @@ interface SessionItem {
   scored_count: number;
   total_covered: number;
   total_points: number;
+  question_ids: string[];
   results: Array<{
     question_index: number;
     question_id: string;
@@ -38,80 +42,156 @@ function formatDate(iso: string) {
 
 export default function HistoryPage() {
   const navigate = useNavigate();
+  const { loadQuestions } = useQuestionBankStore();
   const [sessions, setSessions] = useState<SessionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [playing, setPlaying] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [deleting, setDeleting] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  useEffect(() => {
+  function fetchHistory() {
+    setLoading(true);
     fetch(`${API_BASE}/api/history`)
       .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then((d) => setSessions(d.sessions || []))
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, []);
+  }
+
+  useEffect(() => { fetchHistory(); loadQuestions(); }, []);
 
   function playRecording(sessionId: string, filename: string) {
-    if (playing === `${sessionId}/${filename}`) {
-      audioRef.current?.pause();
-      setPlaying(null);
-      return;
-    }
+    const key = `${sessionId}/${filename}`;
+    if (playing === key) { audioRef.current?.pause(); setPlaying(null); return; }
     audioRef.current?.pause();
-    const url = `${API_BASE}/api/history/${sessionId}/recording/${filename}`;
-    const a = new Audio(url);
+    const a = new Audio(`${API_BASE}/api/history/${sessionId}/recording/${filename}`);
     a.onended = () => setPlaying(null);
     a.play().catch(() => {});
     audioRef.current = a;
-    setPlaying(`${sessionId}/${filename}`);
+    setPlaying(key);
+  }
+
+  function toggleSelect(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
+
+  function toggleSelectAll() {
+    if (selected.size === sessions.length) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(sessions.map((s) => s.session_id)));
+    }
+  }
+
+  async function deleteSelected() {
+    setDeleting(true);
+    try {
+      const ids = Array.from(selected);
+      const resp = await fetch(`${API_BASE}/api/history`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(ids),
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      setSelected(new Set());
+      fetchHistory();
+      message.success(`已删除 ${ids.length} 条记录`);
+    } catch (e: any) {
+      message.error(e.message || '删除失败');
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  async function deleteSingle(sessionId: string) {
+    try {
+      const resp = await fetch(`${API_BASE}/api/history/${sessionId}`, { method: 'DELETE' });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      fetchHistory();
+      message.success('已删除');
+    } catch (e: any) {
+      message.error(e.message || '删除失败');
+    }
+  }
+
+  function redoSession(session: SessionItem) {
+    const store = useQuestionBankStore.getState();
+    store.resetSelection();
+    for (const qid of session.question_ids) {
+      if (qid) store.toggleSelect(qid);
+    }
+    navigate('/');
   }
 
   if (loading) {
     return <div style={{ textAlign: 'center', padding: 80 }}><Spin size="large" /></div>;
   }
-
   if (error) {
-    return (
-      <div style={{ padding: 40 }}>
-        <Alert message="加载失败" description={error} type="error" showIcon />
-      </div>
-    );
+    return <div style={{ padding: 40 }}><Alert message="加载失败" description={error} type="error" showIcon /></div>;
   }
 
   return (
     <div style={{ maxWidth: 960, margin: '0 auto' }}>
       <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Title level={3} style={{ margin: 0 }}>
-          <HistoryOutlined style={{ marginRight: 8 }} />
-          历史记录
-        </Title>
-        <Button onClick={() => navigate('/')}>返回题库</Button>
+        <Title level={3} style={{ margin: 0 }}><HistoryOutlined style={{ marginRight: 8 }} />历史记录</Title>
+        <Space>
+          {sessions.length > 0 && (
+            <>
+              <Button size="small" onClick={toggleSelectAll}>
+                {selected.size === sessions.length ? '取消全选' : '全选'}
+              </Button>
+              {selected.size > 0 && (
+                <Popconfirm
+                  title={`确定删除选中的 ${selected.size} 条记录？`}
+                  onConfirm={deleteSelected}
+                  okText="删除" cancelText="取消"
+                >
+                  <Button size="small" danger icon={<DeleteOutlined />} loading={deleting}>
+                    删除选中 ({selected.size})
+                  </Button>
+                </Popconfirm>
+              )}
+            </>
+          )}
+          <Button onClick={() => navigate('/')}>返回题库</Button>
+        </Space>
       </div>
 
       {sessions.length === 0 ? (
-        <Empty description="暂无历史记录，先去完成一次模拟面试吧" />
+        <Empty description="暂无历史记录" />
       ) : (
         <List
           dataSource={sessions}
           renderItem={(session) => {
             const avgScore = session.total_points > 0
-              ? Math.round((session.total_covered / session.total_points) * 100)
-              : 0;
+              ? Math.round((session.total_covered / session.total_points) * 100) : 0;
             return (
               <Card
                 size="small"
-                style={{ marginBottom: 12 }}
+                style={{ marginBottom: 12, opacity: selected.has(session.session_id) ? 0.6 : 1 }}
                 title={
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text strong>{formatDate(session.created_at)}</Text>
-                    <Tag color={session.scored_count === session.question_count ? 'green' : 'orange'}>
-                      {session.scored_count}/{session.question_count} 已评分
-                    </Tag>
+                    <Space>
+                      <Checkbox
+                        checked={selected.has(session.session_id)}
+                        onChange={() => toggleSelect(session.session_id)}
+                      />
+                      <Text strong>{formatDate(session.created_at)}</Text>
+                    </Space>
+                    <Space>
+                      <Tag color={session.scored_count === session.question_count ? 'green' : 'orange'}>
+                        {session.scored_count}/{session.question_count} 已评分
+                      </Tag>
+                    </Space>
                   </div>
                 }
               >
-                {/* Score summary */}
                 {session.total_points > 0 && (
                   <div style={{ marginBottom: 8 }}>
                     <Text type="secondary">采分点命中率：</Text>
@@ -121,7 +201,6 @@ export default function HistoryPage() {
                   </div>
                 )}
 
-                {/* Recordings */}
                 <div style={{ marginBottom: 8 }}>
                   <SoundOutlined style={{ marginRight: 4 }} />
                   <Text type="secondary">录音回放：</Text>
@@ -130,8 +209,7 @@ export default function HistoryPage() {
                     const isPlaying = playing === key;
                     return (
                       <Button
-                        key={rec}
-                        size="small"
+                        key={rec} size="small"
                         type={isPlaying ? 'primary' : 'default'}
                         icon={isPlaying ? <CaretRightOutlined /> : <SoundOutlined />}
                         onClick={() => playRecording(session.session_id, rec)}
@@ -143,46 +221,43 @@ export default function HistoryPage() {
                   })}
                 </div>
 
-                {/* Score details */}
+                <Space style={{ marginBottom: 8 }}>
+                  <Button
+                    size="small" icon={<RedoOutlined />}
+                    onClick={() => redoSession(session)}
+                  >
+                    再做一遍
+                  </Button>
+                  <Popconfirm
+                    title="确定删除此记录？" onConfirm={() => deleteSingle(session.session_id)}
+                    okText="删除" cancelText="取消"
+                  >
+                    <Button size="small" danger icon={<DeleteOutlined />}>删除</Button>
+                  </Popconfirm>
+                </Space>
+
                 {session.results.length > 0 && (
-                  <Collapse
-                    size="small"
-                    ghost
-                    items={[
-                      {
-                        key: 'scores',
-                        label: <Text type="secondary">查看评分详情</Text>,
-                        children: session.results.map((r) => (
-                          <div
-                            key={r.question_index}
-                            style={{
-                              padding: '8px 0',
-                              borderBottom: '1px solid #f0f0f0',
-                            }}
-                          >
-                            <Text strong>第{r.question_index + 1}题</Text>
-                            {r.status === 'scored' ? (
-                              <Tag color="green" style={{ marginLeft: 8 }}>
-                                {r.coveredCount}/{r.totalCount} 覆盖
-                              </Tag>
-                            ) : r.status === 'failed' ? (
-                              <Tag color="red" style={{ marginLeft: 8 }}>评分失败</Tag>
-                            ) : (
-                              <Tag style={{ marginLeft: 8 }}>评分中</Tag>
-                            )}
-                            {r.feedback && (
-                              <Text
-                                type="secondary"
-                                style={{ display: 'block', fontSize: 13, marginTop: 4 }}
-                              >
-                                {r.feedback}
-                              </Text>
-                            )}
-                          </div>
-                        )),
-                      },
-                    ]}
-                  />
+                  <Collapse size="small" ghost items={[{
+                    key: 'scores',
+                    label: <Text type="secondary">查看评分详情</Text>,
+                    children: session.results.map((r) => (
+                      <div key={r.question_index} style={{ padding: '8px 0', borderBottom: '1px solid #f0f0f0' }}>
+                        <Text strong>第{r.question_index + 1}题</Text>
+                        {r.status === 'scored' ? (
+                          <Tag color="green" style={{ marginLeft: 8 }}>{r.coveredCount}/{r.totalCount} 覆盖</Tag>
+                        ) : r.status === 'failed' ? (
+                          <Tag color="red" style={{ marginLeft: 8 }}>评分失败</Tag>
+                        ) : (
+                          <Tag style={{ marginLeft: 8 }}>评分中</Tag>
+                        )}
+                        {r.feedback && (
+                          <Text type="secondary" style={{ display: 'block', fontSize: 13, marginTop: 4 }}>
+                            {r.feedback}
+                          </Text>
+                        )}
+                      </div>
+                    )),
+                  }]} />
                 )}
               </Card>
             );
