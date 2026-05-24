@@ -11,5 +11,6 @@ class Question(BaseModel):
     year: int = Field(..., description="Exam year")
     source: str = Field(..., description="Source description (e.g., 江苏省考面试真题)")
     scorePoints: Optional[str] = Field(None, description="Scoring criteria text")
+    referenceAnswer: Optional[str] = Field(None, description="Official reference answer for model answer display")
 
     model_config = {"from_attributes": True}
