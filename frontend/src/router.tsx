@@ -5,6 +5,7 @@ import ExamRoomPage from './pages/ExamRoom';
 import QuestionInterviewPage from './pages/QuestionInterview';
 import ScoringResultsPage from './pages/ScoringResults';
 import TestRecordingPage from './pages/TestRecording';
+import HistoryPage from './pages/History';
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ export const router = createBrowserRouter([
       { path: 'exam-room/question', element: <QuestionInterviewPage /> },
       { path: 'results', element: <ScoringResultsPage /> },
       { path: 'test-recording', element: <TestRecordingPage /> },
+      { path: 'history', element: <HistoryPage /> },
     ],
   },
 ]);

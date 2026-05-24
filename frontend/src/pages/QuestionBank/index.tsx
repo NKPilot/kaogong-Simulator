@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Typography, Spin, Alert, Button } from 'antd';
-import { SoundOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
+import { Typography, Spin, Alert, Button, Space } from 'antd';
+import { SoundOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useQuestionBankStore } from '../../store/questionBankStore';
 import QuestionTable from './components/QuestionTable';
 import SelectionPanel from './components/SelectionPanel';
@@ -9,6 +10,7 @@ import DeviceSettingsPanel from './components/DeviceSettingsPanel';
 const { Title, Text } = Typography;
 
 export default function QuestionBankPage() {
+  const navigate = useNavigate();
   const { questions, loading, error, loadQuestions } = useQuestionBankStore();
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -57,9 +59,14 @@ export default function QuestionBankPage() {
             请选择题日，支持逐题作答
           </Text>
         </div>
-        <Button icon={<SoundOutlined />} onClick={() => setSettingsOpen(true)}>
-          设备设置
-        </Button>
+        <Space>
+          <Button icon={<HistoryOutlined />} onClick={() => navigate('/history')}>
+            历史记录
+          </Button>
+          <Button icon={<SoundOutlined />} onClick={() => setSettingsOpen(true)}>
+            设备设置
+          </Button>
+        </Space>
       </div>
 
       <DeviceSettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} />
