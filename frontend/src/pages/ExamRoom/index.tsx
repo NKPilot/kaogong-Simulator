@@ -83,7 +83,7 @@ export default function ExamRoomPage() {
     async function loadGuidanceAndAudio() {
       try {
         // Step 1: Fetch guidance text
-        const guidance = await fetchGuidance(questionCount || 3);
+        const guidance = await fetchGuidance(questionCount || selectedQuestions.length);
         if (cancelled) return;
         setGuidanceText(guidance);
         setGuidanceLoading(false);

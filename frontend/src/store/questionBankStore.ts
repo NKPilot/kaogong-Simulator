@@ -36,8 +36,7 @@ export const useQuestionBankStore = create<QuestionBankStore>((set, get) => ({
       // Remove selection
       set({ selectedIds: state.selectedIds.filter(sid => sid !== id) });
     } else {
-      // Add selection (only if not at max)
-      if (state.selectedIds.length >= 4) return;
+      // Add selection
       set({ selectedIds: [...state.selectedIds, id] });
     }
   },
@@ -47,11 +46,11 @@ export const useQuestionBankStore = create<QuestionBankStore>((set, get) => ({
   },
 
   isMaxReached: () => {
-    return get().selectedIds.length >= 4;
+    return false; // no upper limit
   },
 
   canProceed: () => {
-    return get().selectedIds.length >= 3;
+    return get().selectedIds.length >= 1;
   },
 
   // Data loading

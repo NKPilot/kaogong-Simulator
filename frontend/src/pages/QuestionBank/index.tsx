@@ -54,7 +54,7 @@ export default function QuestionBankPage() {
             题库
           </Title>
           <Text type="secondary" style={{ fontSize: 14 }}>
-            请选择 3-4 道题组成本次模拟面试
+            请选择题日，支持逐题作答
           </Text>
         </div>
         <Button icon={<SoundOutlined />} onClick={() => setSettingsOpen(true)}>

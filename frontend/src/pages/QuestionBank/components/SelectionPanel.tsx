@@ -12,10 +12,8 @@ export default function SelectionPanel() {
   const selectedQuestions = questions.filter(q => selectedIds.includes(q.id));
 
   function getStatusText(): string {
-    if (selectedCount === 0) return '请至少选择 3 道题';
-    if (selectedCount < 3) return `已选择 ${selectedCount}/4 题`;
-    if (selectedCount === 3) return '已选择 3/4 题，可以开始面试';
-    return '已选择 4/4 题';
+    if (selectedCount === 0) return '请选择题日';
+    return `已选择 ${selectedCount} 道题，可以开始面试`;
   }
 
   function handleStartInterview() {
@@ -40,8 +38,8 @@ export default function SelectionPanel() {
           <Badge
             count={selectedCount}
             style={{
-              backgroundColor: selectedCount >= 3 ? '#BE1E2D' : '#D9D9D9',
-              color: selectedCount >= 3 ? '#FFFFFF' : '#8C8C8C',
+              backgroundColor: selectedCount >= 1 ? '#BE1E2D' : '#D9D9D9',
+              color: selectedCount >= 1 ? '#FFFFFF' : '#8C8C8C',
               fontSize: 14,
               fontWeight: 600,
             }}
@@ -50,7 +48,7 @@ export default function SelectionPanel() {
           <Text
             style={{
               fontSize: 14,
-              color: selectedCount >= 3 ? '#262626' : '#8C8C8C',
+              color: selectedCount >= 1 ? '#262626' : '#8C8C8C',
             }}
           >
             {getStatusText()}
@@ -67,10 +65,10 @@ export default function SelectionPanel() {
         </Button>
       </div>
 
-      {/* Alert for < 3 selection */}
-      {selectedCount < 3 && selectedCount > 0 && (
+      {/* Alert when no question selected */}
+      {selectedCount === 0 && (
         <Alert
-          message="请至少选择 3 道题"
+          message="请至少选择 1 道题"
           type="warning"
           showIcon
           style={{ marginBottom: 0 }}

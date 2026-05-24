@@ -1,4 +1,4 @@
-import { Table, Checkbox, Typography, Tooltip, message } from 'antd';
+import { Table, Checkbox, Typography } from 'antd';
 import { useQuestionBankStore } from '../../../store/questionBankStore';
 import type { Question } from '../../../types/question';
 import TypeTag from './TypeTag';
@@ -6,16 +6,10 @@ import TypeTag from './TypeTag';
 const { Text, Paragraph } = Typography;
 
 export default function QuestionTable() {
-  const { questions, selectedIds, isSelected, isMaxReached, toggleSelect } = useQuestionBankStore();
+  const { questions, selectedIds, isSelected, toggleSelect } = useQuestionBankStore();
 
   function handleCheckboxClick(record: Question) {
-    if (isSelected(record.id)) {
-      toggleSelect(record.id);
-    } else if (selectedIds.length >= 4) {
-      message.warning('每轮面试最多选择 4 道题');
-    } else {
-      toggleSelect(record.id);
-    }
+    toggleSelect(record.id);
   }
 
   const columns = [
@@ -24,23 +18,13 @@ export default function QuestionTable() {
       dataIndex: undefined,
       width: 48,
       render: (_: unknown, record: Question) => {
-        const disabled = isMaxReached() && !isSelected(record.id);
-        const checkbox = (
+        return (
           <Checkbox
             checked={isSelected(record.id)}
             onChange={() => handleCheckboxClick(record)}
-            disabled={disabled}
             aria-label={`选择${record.title}`}
           />
         );
-        if (disabled) {
-          return (
-            <Tooltip title="每轮面试最多选择 4 道题">
-              {checkbox}
-            </Tooltip>
-          );
-        }
-        return checkbox;
       },
     },
     {
