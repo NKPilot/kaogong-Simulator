@@ -20,6 +20,24 @@ from app.services.asr_service import transcribe_audio
 
 logger = logging.getLogger("interview-simulator")
 
+# Load .env file if DASHSCOPE_API_KEY is not already in environment
+def _load_dotenv(env_path: str) -> None:
+    if not os.path.isfile(env_path):
+        return
+    with open(env_path) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, val = line.partition("=")
+            key = key.strip()
+            val = val.strip().strip('"').strip("'")
+            if key not in os.environ:
+                os.environ[key] = val
+
+if not os.environ.get("DASHSCOPE_API_KEY"):
+    _load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+
 dashscope.api_key = os.environ.get("DASHSCOPE_API_KEY", "")
 
 # Base directory for recordings (same convention as recording_service.py)
