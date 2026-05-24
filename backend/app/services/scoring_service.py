@@ -274,7 +274,7 @@ def evaluate_answer(
         logger.error(msg)
         if retry_count >= 1:
             return {"status": "failed", "error": msg, "question_index": question_index}
-        return evaluate_answer(session_id, question_index, question, retry_count=retry_count)
+        return evaluate_answer(session_id, question_index, question, retry_count=retry_count + 1)
 
     wav_path = None
     try:
