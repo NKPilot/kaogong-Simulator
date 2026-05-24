@@ -33,9 +33,21 @@ class TTSRequest(BaseModel):
         default="longxiaocheng_v2",
         description="DashScope voice ID for speech synthesis",
     )
+    speech_rate: float = Field(
+        default=1.0,
+        ge=0.5,
+        le=2.0,
+        description="Speech speed",
+    )
+    vol: float = Field(
+        default=1.0,
+        gt=0.0,
+        le=10.0,
+        description="Volume",
+    )
 
 
-async def audio_chunk_generator(text: str, voice: str):
+async def audio_chunk_generator(text: str, voice: str, speech_rate: float, vol: float):
     """Generate audio byte chunks for streaming response.
 
     Runs the blocking DashScope SDK call in a thread pool, then
@@ -49,7 +61,7 @@ async def audio_chunk_generator(text: str, voice: str):
         Bytes of audio data (8192-byte chunks).
     """
     audio_bytes: bytes = await asyncio.to_thread(
-        synthesize_speech, text, voice
+        synthesize_speech, text, voice, speech_rate, vol
     )
     for i in range(0, len(audio_bytes), CHUNK_SIZE):
         yield audio_bytes[i : i + CHUNK_SIZE]
@@ -74,7 +86,7 @@ async def synthesize(request: TTSRequest) -> StreamingResponse:
     """
     try:
         return StreamingResponse(
-            audio_chunk_generator(request.text, request.voice),
+            audio_chunk_generator(request.text, request.voice, request.speech_rate, request.vol),
             media_type="audio/mpeg",
             headers={
                 "Cache-Control": "no-cache",

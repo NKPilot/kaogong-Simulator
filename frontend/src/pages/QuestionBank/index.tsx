@@ -4,13 +4,13 @@ import { SoundOutlined } from '@ant-design/icons';
 import { useQuestionBankStore } from '../../store/questionBankStore';
 import QuestionTable from './components/QuestionTable';
 import SelectionPanel from './components/SelectionPanel';
-import MicTestModal from './components/MicTestModal';
+import DeviceSettingsPanel from './components/DeviceSettingsPanel';
 
 const { Title, Text } = Typography;
 
 export default function QuestionBankPage() {
   const { questions, loading, error, loadQuestions } = useQuestionBankStore();
-  const [micTestOpen, setMicTestOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     loadQuestions();
@@ -57,12 +57,12 @@ export default function QuestionBankPage() {
             请选择 3-4 道题组成本次模拟面试
           </Text>
         </div>
-        <Button icon={<SoundOutlined />} onClick={() => setMicTestOpen(true)}>
-          麦克风测试
+        <Button icon={<SoundOutlined />} onClick={() => setSettingsOpen(true)}>
+          设备设置
         </Button>
       </div>
 
-      <MicTestModal open={micTestOpen} onClose={() => setMicTestOpen(false)} />
+      <DeviceSettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
       {/* Empty state */}
       {questions.length === 0 ? (

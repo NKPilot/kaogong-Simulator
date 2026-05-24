@@ -5,3 +5,4 @@ logs/
 
 .playwright-mcp/
 backend/recordings/
+frontend/public/tts-config.json

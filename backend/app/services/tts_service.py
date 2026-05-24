@@ -15,13 +15,20 @@ from dashscope.audio.tts_v2.speech_synthesizer import AudioFormat
 dashscope.api_key = os.environ.get("DASHSCOPE_API_KEY", "")
 
 
-def synthesize_speech(text: str, voice: str = "longxiaocheng_v2") -> bytes:
+def synthesize_speech(
+    text: str,
+    voice: str = "longxiaocheng_v2",
+    speech_rate: float = 1.0,
+    vol: float = 1.0,
+) -> bytes:
     """Synthesize speech from text using DashScope TTS.
 
     Args:
         text: The text to synthesize (max 500 characters).
         voice: DashScope voice ID. Default is "longxiaocheng_v2"
                (formal male voice, steady, broadcast-quality).
+        speech_rate: Speech speed, range [0.5, 2.0].
+        vol: Volume, range (0, 10].
 
     Returns:
         Complete MP3 audio bytes.
@@ -39,7 +46,8 @@ def synthesize_speech(text: str, voice: str = "longxiaocheng_v2") -> bytes:
         model="cosyvoice-v2",
         voice=voice,
         format=AudioFormat.MP3_22050HZ_MONO_256KBPS,
-        speech_rate=1.0,
+        speech_rate=speech_rate,
+        volume=int(vol * 100),
     )
 
     audio_bytes = synthesizer.call(text, timeout_millis=30_000)
