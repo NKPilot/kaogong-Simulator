@@ -2,7 +2,7 @@
   --ink: #1a1a1a;
   --ink-secondary: #5C5C5C;
   --ink-muted: #999;
-  --paper: #F9F7F2;
+  --paper: #F3EFE8;
   --paper-card: #FDFCFA;
   --paper-hover: #F4F1EA;
   --vermillion: #BE1E2D;
@@ -13,6 +13,26 @@
   --shadow-md: 0 2px 8px rgba(0,0,0,0.05), 0 4px 16px rgba(0,0,0,0.03);
   --radius: 8px;
 
+  /* Type capsule colors */
+  --type-a-bg: rgba(22, 119, 255, 0.08);
+  --type-a-text: #1677FF;
+  --type-a-border: rgba(22, 119, 255, 0.15);
+  --type-a-selected-bg: rgba(22, 119, 255, 0.04);
+  --type-b-bg: rgba(82, 196, 26, 0.08);
+  --type-b-text: #389E0D;
+  --type-b-border: rgba(82, 196, 26, 0.15);
+  --type-b-selected-bg: rgba(82, 196, 26, 0.04);
+  --type-c-bg: rgba(250, 140, 22, 0.08);
+  --type-c-text: #D46B08;
+  --type-c-border: rgba(250, 140, 22, 0.15);
+  --type-c-selected-bg: rgba(250, 140, 22, 0.04);
+  --type-struct-bg: rgba(255, 77, 79, 0.08);
+  --type-struct-text: #CF1322;
+  --type-struct-border: rgba(255, 77, 79, 0.15);
+  --type-struct-selected-bg: rgba(255, 77, 79, 0.04);
+
+  --row-hover-bg: #FAFAFA;
+
   font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
   font-size: 14px;
   line-height: 1.6;
@@ -21,18 +41,19 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* Subtle paper grain texture on body */
+/* Page background */
+html {
+  background: #F3EFE8;
+}
 body {
   margin: 0;
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(190,30,45,0.02) 0%, transparent 70%),
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  background: #F3EFE8;
 }
-
 #root {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: #F3EFE8;
 }
 
 /* Typography */
@@ -47,3 +68,8 @@ h1, h2, h3, h4 {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--divider); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #d0ccc4; }
+
+/* Question bank row hover */
+.qb-row {
+  transition: background-color 0.15s ease, box-shadow 0.2s ease;
+}

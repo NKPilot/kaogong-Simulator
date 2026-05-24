@@ -24,7 +24,7 @@ export default function SelectionPanel() {
         background: 'var(--paper-card)',
         borderRadius: 'var(--radius)',
         border: '1px solid var(--divider)',
-        boxShadow: 'var(--shadow-sm)',
+        boxShadow: 'var(--shadow-md)',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -32,8 +32,8 @@ export default function SelectionPanel() {
           <Badge
             count={selectedCount}
             style={{
-              backgroundColor: selectedCount >= 1 ? 'var(--vermillion)' : '#D9D3C8',
-              color: selectedCount >= 1 ? '#FFF' : 'var(--ink-muted)',
+              backgroundColor: selectedCount >= 1 ? '#BE1E2D' : '#D9D3C8',
+              color: selectedCount >= 1 ? '#FFF' : '#999',
               fontSize: 13,
               fontWeight: 600,
               minWidth: 22,
@@ -55,11 +55,7 @@ export default function SelectionPanel() {
           size="large"
           disabled={!canProceed()}
           onClick={() => canProceed() && navigate('/exam-room')}
-          style={{
-            minWidth: 140,
-            background: canProceed() ? 'var(--vermillion)' : undefined,
-            boxShadow: canProceed() ? '0 2px 6px var(--vermillion-glow)' : undefined,
-          }}
+          style={{ minWidth: 140 }}
         >
           开始面试
         </Button>

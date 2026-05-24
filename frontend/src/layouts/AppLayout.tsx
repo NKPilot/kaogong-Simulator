@@ -5,7 +5,7 @@ const { Header, Content } = Layout;
 
 export default function AppLayout() {
   return (
-    <Layout style={{ minHeight: '100vh', background: 'var(--paper)' }}>
+    <Layout style={{ minHeight: '100vh' }}>
       <Header
         style={{
           display: 'flex',
@@ -13,7 +13,7 @@ export default function AppLayout() {
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          background: 'var(--vermillion)',
+          background: '#BE1E2D',
           height: 48,
           padding: '0 32px',
           boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
@@ -36,6 +36,8 @@ export default function AppLayout() {
           maxWidth: 960,
           margin: '0 auto',
           width: '100%',
+          background: '#F3EFE8',
+          flex: 1,
         }}
       >
         <Outlet />

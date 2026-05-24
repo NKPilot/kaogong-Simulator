@@ -12,7 +12,7 @@ createRoot(document.getElementById('root')!).render(
       theme={{
         token: {
           colorPrimary: '#BE1E2D',
-          colorBgLayout: '#F9F7F2',
+          colorBgLayout: '#F3EFE8',
           colorBgContainer: '#FDFCFA',
           colorBorder: '#E8E4DC',
           colorBorderSecondary: '#F0ECE4',
@@ -42,14 +42,14 @@ createRoot(document.getElementById('root')!).render(
             headerBg: '#BE1E2D',
             headerHeight: 48,
             headerPadding: '0 32px',
-            bodyBg: '#F9F7F2',
+            bodyBg: '#F3EFE8',
             siderBg: '#FDFCFA',
           },
           Table: {
             headerBg: '#F4F1EA',
             headerColor: '#1A1A1A',
             headerSplitColor: '#E8E4DC',
-            rowHoverBg: '#FFF2F0',
+            rowHoverBg: '#FAFAFA',
             borderColor: '#E8E4DC',
             cellPaddingBlock: 10,
             cellPaddingInline: 16,
@@ -70,7 +70,7 @@ createRoot(document.getElementById('root')!).render(
           },
           Tag: { fontSize: 12, lineHeight: 20 },
           Badge: { fontSize: 12 },
-          Checkbox: { controlInteractiveSize: 18, borderRadiusSM: 4 },
+          Checkbox: { controlInteractiveSize: 20, borderRadiusSM: 6 },
           Modal: {
             titleFontSize: 16,
             borderRadius: 10,
