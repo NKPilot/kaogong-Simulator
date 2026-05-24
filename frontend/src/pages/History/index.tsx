@@ -274,18 +274,15 @@ export default function HistoryPage() {
                   <Collapse size="small" ghost items={[{
                     key: 'scores',
                     label: <Text type="secondary">查看评分详情</Text>,
-                    children: session.results.map((r) => {
-                      const rOverallScore = (r as any).overallScore ?? 0;
-                      const hasRichData = r.status === 'scored';
-                      return (
+                    children: session.results.map((r) => (
                       <div key={r.question_index} style={{ padding: '8px 0', borderBottom: '1px solid #f0f0f0' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <Text strong>{r.question_index + 1}. {titleMap[r.question_id] || `第${r.question_index + 1}题`}</Text>
                           <Space>
-                            {hasRichData ? (
+                            {r.status === 'scored' ? (
                               <>
-                                {rOverallScore > 0 && (
-                                  <Tag color="blue">{rOverallScore}分</Tag>
+                                {((r as any).overallScore ?? 0) > 0 && (
+                                  <Tag color="blue">{(r as any).overallScore}分</Tag>
                                 )}
                                 <Tag color="green">{r.coveredCount}/{r.totalCount} 覆盖</Tag>
                               </>
@@ -312,7 +309,7 @@ export default function HistoryPage() {
                           </Text>
                         )}
                       </div>
-                    )})]} />
+                    ))}]} />
                 )}
               </Card>
             );
