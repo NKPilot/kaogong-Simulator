@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from 'antd';
+import { Button, Popconfirm } from 'antd';
 import { PlayCircleOutlined } from '@ant-design/icons';
 import { useInterviewStore } from '../../store/interviewStore';
 import { useQuestionBankStore } from '../../store/questionBankStore';
@@ -489,6 +489,7 @@ export default function QuestionInterviewPage() {
             justifyContent: 'center',
             gap: 16,
             alignItems: 'center',
+            flexWrap: 'wrap',
           }}
         >
           <ReReadButton
@@ -496,6 +497,35 @@ export default function QuestionInterviewPage() {
             used={store.rereadUsed}
             onReRead={handleReRead}
           />
+          {/* Skip thinking phase */}
+          {store.questionStatus === 'thinking' && (
+            <Button
+              onClick={() => {
+                if (timerIntervalRef.current) { clearInterval(timerIntervalRef.current); timerIntervalRef.current = null; }
+                useInterviewStore.setState({ timerRemaining: 0, timerRunning: false });
+                handleThinkingEnded();
+              }}
+            >
+              提前结束思考
+            </Button>
+          )}
+          {/* Stop answering early */}
+          {store.questionStatus === 'answering' && (
+            <Popconfirm
+              title="确定结束作答？"
+              description="录音将停止并提交评分"
+              onConfirm={() => {
+                if (timerIntervalRef.current) { clearInterval(timerIntervalRef.current); timerIntervalRef.current = null; }
+                useInterviewStore.setState({ timerRemaining: 0, timerRunning: false });
+                handleAnsweringEnded();
+              }}
+              okText="确定" cancelText="取消"
+            >
+              <Button type="primary" danger>
+                结束作答
+              </Button>
+            </Popconfirm>
+          )}
           <QuestionDrawer
             questionText={currentQuestion?.fullText || ''}
             questionTitle={currentQuestion?.title || ''}
